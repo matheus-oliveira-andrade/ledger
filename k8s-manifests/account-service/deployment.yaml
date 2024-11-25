@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: account-api-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: account-api
+  template:
+    metadata:
+      labels:
+        component: account-api
+    spec:
+      containers:
+        - name: account-api
+          image: micrommath/ledger-account-api:latest
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: shared-data
+              mountPath: /logs
+          env:
+            - name: PORT
+              value: "8080"
+            - name: SERVICE_NAME
+              value: "account-service"
+            - name: ENVIRONMENT
+              value: "production"
+          readinessProbe:
+            initialDelaySeconds: 3
+            periodSeconds: 60
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8080                    
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 90
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8080
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "200m"
+            limits:
+              memory: "200Mi"
+              cpu: "300m"           
+      volumes:
+        - name: shared-data
+          emptyDir: {}     
