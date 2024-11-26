@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-svc
+  name: account-db-svc
   labels:
-    component: postgres
+    component: account-postgres
 spec:
   clusterIP: None
   selector:
-    component: postgres
+    component: account-postgres
   ports:
     - port: 5432
       targetPort: 5432
