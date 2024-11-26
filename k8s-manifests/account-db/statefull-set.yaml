@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: postgres-db
+  name: account-db
 spec:
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Delete
   selector:
     matchLabels:
-      component: postgres
-  serviceName: postgres-svc
+      component: account-postgres
+  serviceName: account-db-svc
   replicas: 1
   template:
     metadata:
       labels:
-        component: postgres
+        component: account-postgres
     spec:
       containers:
         - name: postgres
@@ -23,9 +23,11 @@ spec:
           volumeMounts:
             - name: volume-postgres
               mountPath: /var/lib/postgresql/data
+            - name: script-volume
+              mountPath: /docker-entrypoint-initdb.d
           env: 
             - name: POSTGRES_DB
-              value: "postgresdb"
+              value: "Account"
             - name: POSTGRES_USER
               value: "db_user"
             - name: POSTGRES_PASSWORD
@@ -40,13 +42,17 @@ spec:
             limits:
               memory: "250Mi"
               cpu: "500m"
+      volumes:
+        - name: script-volume
+          configMap:
+            name: account-service-sql-scripts
   volumeClaimTemplates:
     - metadata:
         name: volume-postgres
       spec:
-        storageClassName: postgres-storage-class
+        storageClassName: account-postgres-storage-class
         accessModes:
           - ReadWriteMany
         resources:
           requests:
-            storage: 500Mi
+            storage: 350Mi
