@@ -1,5 +1,5 @@
 echo "Installing ingres nginx"
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.0/deploy/static/provider/cloud/deploy.yaml
 
 echo "Waiting for the ingress controller pod to be up, running, and ready"
 kubectl wait --namespace ingress-nginx \
