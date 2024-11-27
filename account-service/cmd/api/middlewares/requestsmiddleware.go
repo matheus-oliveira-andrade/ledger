@@ -4,11 +4,15 @@ import (
 	"log/slog"
 	"net/http"
 	"time"
+
+	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/utils"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
 )
 
-func RequestLoggerMiddleware() func(next http.Handler) http.Handler {
+func UseRequestLoggerMiddleware() func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			logger := r.Context().Value(utils.CtxLoggerKey).(logger.LoggerInterface)
 
 			ww := &responseWriter{
 				ResponseWriter: w,
@@ -19,7 +23,7 @@ func RequestLoggerMiddleware() func(next http.Handler) http.Handler {
 			next.ServeHTTP(ww, r)
 			duration := time.Since(start)
 
-			slog.Info(
+			logger.LogInformation(
 				"Request received",
 				slog.String("method", r.Method),
 				slog.String("path", r.URL.Path),
