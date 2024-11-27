@@ -23,7 +23,7 @@ func NewLogger(serviceName string, minLevel slog.Level, output io.Writer) Logger
 
 	jsonHandler := slog.NewJSONHandler(output, &slog.HandlerOptions{
 		Level:     minLevel,
-		AddSource: true,
+		AddSource: false,
 	})
 
 	logger := slog.New(jsonHandler).With(slog.String("service", serviceName))
