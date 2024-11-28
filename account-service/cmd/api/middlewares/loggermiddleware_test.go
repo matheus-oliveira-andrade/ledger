@@ -17,8 +17,11 @@ func TestUseLoggerMiddleware(t *testing.T) {
 
 	handlerValidator := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logValue := r.Context().Value(utils.CtxLoggerKey).(logger.LoggerInterface)
-
 		assert.NotNil(t, logValue, "logger not found in context")
+
+		correlationId := r.Context().Value(utils.CtxCorrelationIdKey).(string)
+		assert.NotNil(t, correlationId)
+		assert.NotEmpty(t, correlationId)
 
 		w.WriteHeader(http.StatusOK)
 	})

@@ -16,7 +16,7 @@ import (
 
 func TestUseLogRequestsMiddleware(t *testing.T) {
 	buffer := bytes.Buffer{}
-	fakeLogger := logger.NewLogger("test-service", slog.LevelInfo, &buffer)
+	fakeLogger := logger.NewLogger("test-service", slog.LevelInfo, &buffer, "")
 
 	fakeHttpHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)

@@ -18,7 +18,7 @@ import (
 func TestHealthzHandle(t *testing.T) {
 	//arrange
 	buffer := bytes.Buffer{}
-	fakeLogger := logger.NewLogger("test-server", slog.LevelInfo, &buffer)
+	fakeLogger := logger.NewLogger("test-server", slog.LevelInfo, &buffer, "")
 
 	ctx := context.WithValue(context.Background(), utils.CtxLoggerKey, fakeLogger)
 
