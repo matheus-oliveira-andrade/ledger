@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/utils"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils"
 )
 
 func UseLogRequestsMiddleware() func(next http.Handler) http.Handler {
