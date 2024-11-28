@@ -10,8 +10,8 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/routes"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/utils"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils"
 	"github.com/stretchr/testify/assert"
 )
 

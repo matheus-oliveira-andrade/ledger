@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/utils"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils"
 )
 
 func SetupHealthz(router chi.Router) {

@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/middlewares"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/utils"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils"
 	"github.com/stretchr/testify/assert"
 )
 

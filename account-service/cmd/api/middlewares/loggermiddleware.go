@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/utils"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils"
 	"github.com/spf13/viper"
 )
 
