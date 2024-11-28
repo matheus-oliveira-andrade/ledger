@@ -1,21 +1,24 @@
 package routes
 
 import (
-	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/utils"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
 )
 
-func SetupHealthz(r chi.Router) {
-	r.Get("/healthz", handle)
+func SetupHealthz(router chi.Router) {
+	router.Get("/healthz", handle)
 }
 
 func handle(w http.ResponseWriter, r *http.Request) {
-	slog.Info("handling healthz")
+	logger := r.Context().Value(utils.CtxLoggerKey).(logger.LoggerInterface)
+
+	logger.LogInformation("handling healthz")
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))
 
-	slog.Info("handled healthz")
+	logger.LogInformation("handled healthz")
 }

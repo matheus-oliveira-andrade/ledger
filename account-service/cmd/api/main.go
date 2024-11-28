@@ -6,27 +6,41 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/middlewares"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/routes"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/configs/settings"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/configs/structuredlogs"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
 	"github.com/spf13/viper"
 )
 
 func main() {
 	settings.Setup()
 	serviceName := viper.GetString("SERVICE_NAME")
-	env := viper.GetString("ENVIRONMENT")
-	port := viper.GetInt("PORT")
+	if serviceName == "" {
+		panic("env variable SERVICE_NAME not loaded")
+	}
 
-	structuredlogs.SetupLogger(serviceName)
+	env := viper.GetString("ENVIRONMENT")
+	if env == "" {
+		panic("env variable ENVIRONMENT not loaded")
+	}
+
+	port := viper.GetInt("PORT")
+	if port == 0 {
+		panic("env variable PORT not loaded")
+	}
 
 	r := chi.NewRouter()
+	r.Use(middlewares.UseLoggerMiddleware())
+	r.Use(middlewares.UseLogRequestsMiddleware())
+
 	routes.SetupHealthz(r)
 
-	slog.Info("server started", "port", port, "environment", env)
+	logger := logger.NewLogger(serviceName, slog.LevelInfo, nil)
+	logger.LogInformation("server started", "port", port, "environment", env)
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), r)
 	if err != nil {
-		slog.Error("server failed to start", "error", err.Error())
+		logger.LogError("server failed to start", "error", err.Error())
 	}
 }
