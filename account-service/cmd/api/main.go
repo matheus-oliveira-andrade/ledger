@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/google/uuid"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/middlewares"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/routes"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/configs/settings"
@@ -36,7 +37,7 @@ func main() {
 
 	routes.SetupHealthz(r)
 
-	logger := logger.NewLogger(serviceName, slog.LevelInfo, nil)
+	logger := logger.NewLogger(serviceName, slog.LevelInfo, nil, uuid.NewString())
 	logger.LogInformation("server started", "port", port, "environment", env)
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), r)

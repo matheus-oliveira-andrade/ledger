@@ -16,7 +16,7 @@ type Logger struct {
 	slogger *slog.Logger
 }
 
-func NewLogger(serviceName string, minLevel slog.Level, output io.Writer) LoggerInterface {
+func NewLogger(serviceName string, minLevel slog.Level, output io.Writer, correlationId string) LoggerInterface {
 	if output == nil {
 		output = os.Stdout
 	}
@@ -26,7 +26,9 @@ func NewLogger(serviceName string, minLevel slog.Level, output io.Writer) Logger
 		AddSource: false,
 	})
 
-	logger := slog.New(jsonHandler).With(slog.String("service", serviceName))
+	logger := slog.New(jsonHandler).
+		With(slog.String("service", serviceName)).
+		With(slog.String("correlationId", correlationId))
 
 	return &Logger{
 		slogger: logger,
