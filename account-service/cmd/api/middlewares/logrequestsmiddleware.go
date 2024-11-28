@@ -9,7 +9,7 @@ import (
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
 )
 
-func UseRequestLoggerMiddleware() func(next http.Handler) http.Handler {
+func UseLogRequestsMiddleware() func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			logger := r.Context().Value(utils.CtxLoggerKey).(logger.LoggerInterface)
