@@ -4,16 +4,23 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/middlewares"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/routes"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/routes/v1"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/configs/settings"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
 	"github.com/spf13/viper"
+
+	_ "github.com/matheus-oliveira-andrade/ledger/account-service/docs"
+	httpSwagger "github.com/swaggo/http-swagger" // http-swagger middleware
 )
 
+// @title Account service Swagger API
+// @version 1.0
+// @description account service part of ledger project
 func main() {
 	settings.Setup()
 	serviceName := viper.GetString("SERVICE_NAME")
@@ -35,7 +42,13 @@ func main() {
 	r.Use(middlewares.UseLoggerMiddleware())
 	r.Use(middlewares.UseLogRequestsMiddleware())
 
-	routes.SetupHealthz(r)
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("http://localhost:"+strconv.Itoa(port)+"/swagger/doc.json"), //The url pointing to API definition
+	))
+
+	r.Route("/v1", func(r chi.Router) {
+		routes.SetupHealthz(r)
+	})
 
 	logger := logger.NewLogger(serviceName, slog.LevelInfo, nil, uuid.NewString())
 	logger.LogInformation("server started", "port", port, "environment", env)

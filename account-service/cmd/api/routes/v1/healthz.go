@@ -8,6 +8,14 @@ import (
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils"
 )
 
+// ShowAccount godoc
+// @Summary      Get health check
+// @Description
+// @Tags         healthz
+// @Accept plain
+// @Produce plain
+// @Success 200 {string} string "OK"
+// @Router /v1/healthz [get]
 func SetupHealthz(router chi.Router) {
 	router.Get("/healthz", handle)
 }
