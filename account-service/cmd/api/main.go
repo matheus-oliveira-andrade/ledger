@@ -43,7 +43,7 @@ func main() {
 	r.Use(middlewares.UseLogRequestsMiddleware())
 
 	r.Get("/swagger/*", httpSwagger.Handler(
-		httpSwagger.URL("http://localhost:"+strconv.Itoa(port)+"/swagger/doc.json"), //The url pointing to API definition
+		httpSwagger.URL("http://localhost:"+strconv.Itoa(port)+"/swagger/doc.json"),
 	))
 
 	r.Route("/v1", func(r chi.Router) {
