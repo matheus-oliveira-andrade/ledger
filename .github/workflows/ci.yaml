@@ -33,8 +33,7 @@ jobs:
         shell: bash
         run: |
           go install github.com/swaggo/swag/cmd/swag@latest
-          swag init --dir ./cmd/api
-          go run ./cmd/api/main.go
+          swag init --dir ./cmd/api          
         working-directory: "./account-service"
 
       - name: CI account service
