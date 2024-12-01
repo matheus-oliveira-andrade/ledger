@@ -29,6 +29,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
+      - name: Run Swag command (optional)
+        shell: bash
+        run: |
+          go install github.com/swaggo/swag/cmd/swag@latest
+          swag init --dir ./cmd/api
+          go run ./cmd/api/main.go
+        working-directory: "./account-service"
+
       - name: CI account service
         uses: ./.github/actions/go-build-test
         with:
