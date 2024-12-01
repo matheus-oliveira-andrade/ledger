@@ -6,12 +6,21 @@ Ensure the following tools are installed:
 - [Minikube](https://minikube.sigs.k8s.io/docs/start/) – for local Kubernetes cluster
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) – Kubernetes command-line tool
 
-
 ### Creating resources
 
 - Creating cluster
 ```bash
 minikube start
+```
+
+- Install nginx ingress
+```bash
+./install-nginx.sh
+```
+
+- Apply manifests
+```bash
+kubectl apply -Rf . 
 ```
 
 - Apply manifests
