@@ -47,9 +47,13 @@ Now you can access services exposed via the Ingress controller at `localhost`
 ### Deleting resouces
 To remove all resources created by the manifests
 
+- Delete all resources created with manifests file
 ```bash
-# delete all resources created with manifests file
 kubectl delete -Rf . 
 ```
 
+- Delete Kubernetes cluster
+```bash
+minikube delete
+```
 
