@@ -23,11 +23,6 @@ minikube start
 kubectl apply -Rf . 
 ```
 
-- Apply manifests
-```bash
-kubectl apply -Rf . 
-```
-
 ### Running the Application Locally
 
 By default, `minikube` does not expose cluster services to `localhost`. To access applications locally:
@@ -37,7 +32,7 @@ By default, `minikube` does not expose cluster services to `localhost`. To acces
 minikube addons enable ingress
 ```
 
-2 - Start the inikube tunnel in a new terminal
+2 - Start the minikube tunnel in a new terminal
 ```bash    
 minikube tunnel 
 ```
