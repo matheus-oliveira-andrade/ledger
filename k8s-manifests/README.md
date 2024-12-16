@@ -2,7 +2,7 @@
 This folder contains all required Kubernetes manifests (YAML files) to deploy and run the application on a Kubernetes cluster.
 
 ### Prerequisites
-Ensure the following tools are installed:
+Ensure the following tools are installed, if you want use `minikube`:
 - [Minikube](https://minikube.sigs.k8s.io/docs/start/) – for local Kubernetes cluster
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) – Kubernetes command-line tool
 
@@ -36,8 +36,15 @@ minikube addons enable ingress
 ```bash    
 minikube tunnel 
 ```
-
 Now you can access services exposed via the Ingress controller at `localhost` 
+
+
+### Exposing database locally
+
+In a new terminal
+```sh
+kubectl port-forward svc/account-db-svc 5432:5432
+```
 
 ### Deleting resouces
 To remove all resources created by the manifests
