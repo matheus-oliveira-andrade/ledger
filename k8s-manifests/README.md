@@ -2,7 +2,7 @@
 This folder contains all required Kubernetes manifests (YAML files) to deploy and run the application on a Kubernetes cluster.
 
 ### Prerequisites
-Ensure the following tools are installed, if you want use `minikube`:
+Ensure the following tools are installed:
 - [Minikube](https://minikube.sigs.k8s.io/docs/start/) – for local Kubernetes cluster
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) – Kubernetes command-line tool
 
