@@ -32,7 +32,6 @@ func main() {
 	}
 
 	r := chi.NewRouter()
-	r.Use(middlewares.UseLoggerMiddleware())
 	r.Use(middlewares.UseLogRequestsMiddleware())
 
 	routes.SetupHealthz(r)
