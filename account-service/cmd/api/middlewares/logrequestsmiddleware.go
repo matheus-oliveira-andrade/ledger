@@ -6,14 +6,11 @@ import (
 	"time"
 
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils"
 )
 
-func UseLogRequestsMiddleware() func(next http.Handler) http.Handler {
+func UseLogRequestsMiddleware(logger logger.LoggerInterface) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			logger := r.Context().Value(utils.CtxLoggerKey).(logger.LoggerInterface)
-
 			ww := &responseWriter{
 				ResponseWriter: w,
 				status:         http.StatusOK,

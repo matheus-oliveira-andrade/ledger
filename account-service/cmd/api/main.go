@@ -31,12 +31,13 @@ func main() {
 		panic("env variable PORT not loaded")
 	}
 
+	logger := logger.NewLogger(serviceName, slog.LevelInfo, nil, uuid.NewString())
+
 	r := chi.NewRouter()
-	r.Use(middlewares.UseLogRequestsMiddleware())
+	r.Use(middlewares.UseLogRequestsMiddleware(logger))
 
 	routes.SetupHealthz(r)
 
-	logger := logger.NewLogger(serviceName, slog.LevelInfo, nil, uuid.NewString())
 	logger.LogInformation("server started", "port", port, "environment", env)
 
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), r)
