@@ -1,36 +1,32 @@
 package middlewares_test
 
 import (
-	"bytes"
-	"context"
-	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/middlewares"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils"
+	middlewares_mocks "github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/middlewares/mocks"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestUseLogRequestsMiddleware(t *testing.T) {
-	buffer := bytes.Buffer{}
-	fakeLogger := logger.NewLogger("test-service", slog.LevelInfo, &buffer, "")
-
 	fakeHttpHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	middleware := middlewares.UseLogRequestsMiddleware()
+	logger := &middlewares_mocks.MockLogger{}
+	logger.On("LogInformation", "Request received", mock.Anything).Return()
+
+	middleware := middlewares.UseLogRequestsMiddleware(logger)
 
 	request := httptest.NewRequest(http.MethodGet, "/", nil)
-	ctx := context.WithValue(request.Context(), utils.CtxLoggerKey, fakeLogger)
 
 	recorder := httptest.NewRecorder()
 
-	middleware(fakeHttpHandler).ServeHTTP(recorder, request.WithContext(ctx))
+	middleware(fakeHttpHandler).ServeHTTP(recorder, request)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)
-	assert.Contains(t, buffer.String(), `Request received`)
+	logger.AssertExpectations(t)
 }

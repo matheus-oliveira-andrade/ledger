@@ -1,6 +1,7 @@
 package utils
 
 type LoggerKey string
+type CorrelationIdKey string
 
 const CtxLoggerKey LoggerKey = "logger"
-const CtxCorrelationIdKey LoggerKey = "correlationId"
+const CorrelationIdHeader CorrelationIdKey = "x-correlation-id"
