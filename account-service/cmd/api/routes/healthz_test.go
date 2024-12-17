@@ -1,42 +1,35 @@
 package routes_test
 
 import (
-	"bytes"
-	"context"
-	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/go-chi/chi"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/routes"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils"
+	routes_mocks "github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/routes/mocks"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestHealthzHandle(t *testing.T) {
-	//arrange
-	buffer := bytes.Buffer{}
-	fakeLogger := logger.NewLogger("test-server", slog.LevelInfo, &buffer, "")
-
-	ctx := context.WithValue(context.Background(), utils.CtxLoggerKey, fakeLogger)
+	// arrange
+	loggerMock := &routes_mocks.MockLogger{}
+	loggerMock.On("LogInformation", "handled healthz", mock.Anything).Return()
+	loggerMock.On("LogInformation", "handling healthz", mock.Anything).Return()
 
 	router := chi.NewRouter()
-
-	// act
-	routes.SetupHealthz(router)
+	routes.NewHealthzRoute(loggerMock).SetupHealthzRoutes(router)
 
 	request := httptest.NewRequest(http.MethodGet, "/healthz", nil)
-	request = request.WithContext(ctx)
-
 	recorder := httptest.NewRecorder()
+
+	// act
 	router.ServeHTTP(recorder, request)
 
 	// assert
 	assert.Equal(t, http.StatusOK, recorder.Code)
 	assert.Contains(t, "OK", recorder.Body.String())
 
-	assert.Contains(t, buffer.String(), "handling healthz")
-	assert.Contains(t, buffer.String(), "handled healthz")
+	loggerMock.AssertExpectations(t)
 }

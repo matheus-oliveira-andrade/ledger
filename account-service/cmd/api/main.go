@@ -34,9 +34,10 @@ func main() {
 	logger := logger.NewLogger(serviceName, slog.LevelInfo, nil, uuid.NewString())
 
 	r := chi.NewRouter()
+	r.Use(middlewares.UseCorrelationIdMiddleware())
 	r.Use(middlewares.UseLogRequestsMiddleware(logger))
 
-	routes.SetupHealthz(r)
+	routes.NewHealthzRoute(logger).SetupHealthzRoutes(r)
 
 	logger.LogInformation("server started", "port", port, "environment", env)
 

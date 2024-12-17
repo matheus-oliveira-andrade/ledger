@@ -5,20 +5,27 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils"
 )
 
-func SetupHealthz(router chi.Router) {
-	router.Get("/healthz", handle)
+type HealthzRoute struct {
+	logger logger.LoggerInterface
 }
 
-func handle(w http.ResponseWriter, r *http.Request) {
-	logger := r.Context().Value(utils.CtxLoggerKey).(logger.LoggerInterface)
+func NewHealthzRoute(logger logger.LoggerInterface) *HealthzRoute {
+	return &HealthzRoute{
+		logger: logger,
+	}
+}
 
-	logger.LogInformation("handling healthz")
+func (r *HealthzRoute) SetupHealthzRoutes(router chi.Router) {
+	router.Get("/healthz", r.handle)
+}
+
+func (r *HealthzRoute) handle(w http.ResponseWriter, _ *http.Request) {
+	r.logger.LogInformation("handling healthz")
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))
 
-	logger.LogInformation("handled healthz")
+	r.logger.LogInformation("handled healthz")
 }
