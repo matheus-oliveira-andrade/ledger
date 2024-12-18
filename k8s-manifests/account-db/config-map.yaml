@@ -5,8 +5,7 @@ metadata:
 data:
   init.sql: |
     CREATE TABLE IF NOT EXISTS accounts (
-       Id SERIAL PRIMARY KEY,
-       Number VARCHAR(15),
+       Id SERIAL PRIMARY KEY,       
        Name VARCHAR(120),
        Document VARCHAR(14),       
        CreatedAt TIMESTAMP,
