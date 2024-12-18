@@ -13,12 +13,7 @@ import (
 func TestCreate_Success(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	assert.NoError(t, err)
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(db)
+	defer db.Close()
 
 	repo := repositories.NewAccountRepository(db)
 
@@ -38,12 +33,7 @@ func TestCreate_Success(t *testing.T) {
 func TestCreate_Error(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	assert.NoError(t, err)
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(db)
+	defer db.Close()
 
 	repo := repositories.NewAccountRepository(db)
 
@@ -65,12 +55,8 @@ func TestGetByDocument_AccFound(t *testing.T) {
 
 	db, mock, err := sqlmock.New()
 	assert.NoError(t, err)
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(db)
+	defer db.Close()
+
 	acc := domain.NewAccount("acc test", "01234567890")
 
 	repo := repositories.NewAccountRepository(db)
@@ -96,13 +82,7 @@ func TestGetByDocument_AccNotFound(t *testing.T) {
 	t.Parallel()
 
 	db, mock, err := sqlmock.New()
-	assert.NoError(t, err)
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-			panic(err)
-		}
-	}(db)
+	defer db.Close()
 
 	acc := domain.NewAccount("acc test", "01234567890")
 
