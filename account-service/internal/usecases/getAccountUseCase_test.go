@@ -15,9 +15,7 @@ func TestHandle_Err(t *testing.T) {
 	accId := "666"
 
 	accountRepositoryMock := usecases_mocks.MockAccountRepository{}
-	accountRepositoryMock.
-		On("GetById", accId).
-		Return((*domain.Account)(nil), errors.New("generic error here"))
+	accountRepositoryMock.On("GetById", accId).Return((*domain.Account)(nil), errors.New("generic error here"))
 
 	loggerMock := usecases_mocks.MockLogger{}
 	loggerMock.On("LogInformation", "getting account by id", mock.Anything).Return()
@@ -42,9 +40,7 @@ func TestHandle_NotFound(t *testing.T) {
 	accId := "666"
 
 	accountRepositoryMock := usecases_mocks.MockAccountRepository{}
-	accountRepositoryMock.
-		On("GetById", accId).
-		Return((*domain.Account)(nil), nil)
+	accountRepositoryMock.On("GetById", accId).Return((*domain.Account)(nil), nil)
 
 	loggerMock := usecases_mocks.MockLogger{}
 	loggerMock.On("LogInformation", "getting account by id", mock.Anything).Return()
@@ -71,9 +67,7 @@ func TestHandle_Success(t *testing.T) {
 	acc.Id = accId
 
 	accountRepositoryMock := usecases_mocks.MockAccountRepository{}
-	accountRepositoryMock.
-		On("GetById", accId, mock.Anything).
-		Return(acc, nil)
+	accountRepositoryMock.On("GetById", accId, mock.Anything).Return(acc, nil)
 
 	loggerMock := usecases_mocks.MockLogger{}
 	loggerMock.On("LogInformation", "getting account by id", mock.Anything).Return()
