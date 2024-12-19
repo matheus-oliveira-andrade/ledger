@@ -52,10 +52,12 @@ func main() {
 		apiRouter.Route("/v1", func(v1Router chi.Router) {
 			dbConnection := repositories.NewDBConnection()
 			accountRepository := repositories.NewAccountRepository(dbConnection)
+
 			createAccountUseCase := usecases.NewCreateAccountUseCase(l, accountRepository)
+			getAccountUseCase := usecases.NewGetAccountUseCase(l, accountRepository)
 
 			controllersV1.
-				NewAccountsController(l, createAccountUseCase).
+				NewAccountsController(l, createAccountUseCase, getAccountUseCase).
 				RegisterRoutes(v1Router)
 		})
 	})

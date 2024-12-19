@@ -98,3 +98,54 @@ func TestGetByDocument_AccNotFound(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Nil(t, account)
 }
+
+func TestGetById_AccFound(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	assert.NoError(t, err)
+	defer db.Close()
+
+	acc := domain.NewAccount("acc test", "01234567890")
+	acc.Id = "4"
+
+	repo := repositories.NewAccountRepository(db)
+
+	rows := sqlmock.
+		NewRows([]string{"Id", "Name", "Document", "CreatedAt", "UpdatedAt"}).
+		AddRow(acc.Id, acc.Name, acc.Document, acc.CreatedAt, acc.UpdatedAt)
+
+	mock.
+		ExpectQuery("SELECT Id, Name, Document, CreatedAt, UpdatedAt FROM accounts WHERE Id = \\$1").
+		WithArgs(acc.Id).
+		WillReturnRows(rows)
+
+	account, err := repo.GetById(acc.Id)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, account)
+
+	assert.Equal(t, acc, account)
+}
+
+func TestGetById_AccNotFound(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	defer db.Close()
+
+	acc := domain.NewAccount("acc test", "01234567890")
+	acc.Id = "666"
+
+	repo := repositories.NewAccountRepository(db)
+
+	mock.
+		ExpectQuery("SELECT Id, Name, Document, CreatedAt, UpdatedAt FROM accounts WHERE Id = \\$1").
+		WithArgs(acc.Id).
+		WillReturnError(sql.ErrNoRows)
+
+	account, err := repo.GetById(acc.Id)
+
+	assert.NoError(t, err)
+	assert.Nil(t, account)
+}
