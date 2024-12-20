@@ -4,14 +4,14 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/slogger"
 )
 
 type HealthzRoute struct {
-	logger logger.LoggerInterface
+	logger slogger.LoggerInterface
 }
 
-func NewHealthzRoute(logger logger.LoggerInterface) *HealthzRoute {
+func NewHealthzRoute(logger slogger.LoggerInterface) *HealthzRoute {
 	return &HealthzRoute{
 		logger: logger,
 	}

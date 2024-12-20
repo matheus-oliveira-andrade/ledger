@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/slogger"
 )
 
-func UseLogRequestsMiddleware(logger logger.LoggerInterface) func(next http.Handler) http.Handler {
+func UseLogRequestsMiddleware(logger slogger.LoggerInterface) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ww := &responseWriter{
