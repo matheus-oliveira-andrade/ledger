@@ -8,18 +8,18 @@ import (
 	"time"
 
 	"github.com/go-chi/chi"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/slogger"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/usecases"
 )
 
 type AccountsController struct {
-	logger               logger.LoggerInterface
+	logger               slogger.LoggerInterface
 	createAccountUseCase usecases.CreateAccountUseCaseInterface
 	getAccountUseCase    usecases.GetAccountUseCaseInterface
 }
 
 func NewAccountsController(
-	logger logger.LoggerInterface,
+	logger slogger.LoggerInterface,
 	createAccountUseCase usecases.CreateAccountUseCaseInterface,
 	getAccountUseCase usecases.GetAccountUseCaseInterface,
 ) *AccountsController {

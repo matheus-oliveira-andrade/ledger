@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/domain"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/repositories"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/slogger"
 )
 
 type CreateAccountUseCaseInterface interface {
@@ -13,12 +13,12 @@ type CreateAccountUseCaseInterface interface {
 }
 
 type CreateAccountUseCaseImp struct {
-	logger            logger.LoggerInterface
+	logger            slogger.LoggerInterface
 	accountRepository repositories.AccountRepositoryInterface
 }
 
 func NewCreateAccountUseCase(
-	logger logger.LoggerInterface,
+	logger slogger.LoggerInterface,
 	accountRepository repositories.AccountRepositoryInterface) *CreateAccountUseCaseImp {
 	return &CreateAccountUseCaseImp{
 		logger:            logger,

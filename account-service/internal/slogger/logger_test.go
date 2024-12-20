@@ -1,4 +1,4 @@
-package logger_test
+package slogger_test
 
 import (
 	"bytes"
@@ -6,13 +6,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/slogger"
 )
 
 func TestLogger_LogInformation(t *testing.T) {
 	// arrange
 	var buf bytes.Buffer
-	log := logger.NewLogger("test_service", slog.LevelInfo, &buf, "")
+	log := slogger.NewLogger("test_service", slog.LevelInfo, &buf, "")
 
 	// assert
 	log.LogInformation("message test", slog.String("name", "test"))
@@ -27,7 +27,7 @@ func TestLogger_LogInformation(t *testing.T) {
 func TestLogger_LogWarning(t *testing.T) {
 	// arrange
 	var buf bytes.Buffer
-	log := logger.NewLogger("test_service", slog.LevelInfo, &buf, "")
+	log := slogger.NewLogger("test_service", slog.LevelInfo, &buf, "")
 
 	// assert
 	log.LogWarning("message test", slog.String("name", "test"))
@@ -42,7 +42,7 @@ func TestLogger_LogWarning(t *testing.T) {
 func TestLogger_LogError(t *testing.T) {
 	// arrange
 	var buf bytes.Buffer
-	log := logger.NewLogger("test_service", slog.LevelInfo, &buf, "")
+	log := slogger.NewLogger("test_service", slog.LevelInfo, &buf, "")
 
 	// assert
 	log.LogError("message test", slog.String("name", "test"))
@@ -57,7 +57,7 @@ func TestLogger_LogError(t *testing.T) {
 func TestLogger_MinLevel(t *testing.T) {
 	// arrange
 	var buf bytes.Buffer
-	log := logger.NewLogger("test_service", slog.LevelWarn, &buf, "")
+	log := slogger.NewLogger("test_service", slog.LevelWarn, &buf, "")
 
 	// assert
 	log.LogInformation("should not appears")

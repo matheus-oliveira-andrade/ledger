@@ -2,8 +2,8 @@ package usecases
 
 import (
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/domain"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/logger"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/repositories"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/slogger"
 )
 
 type GetAccountUseCaseInterface interface {
@@ -12,11 +12,11 @@ type GetAccountUseCaseInterface interface {
 
 type GetAccountUseCaseImp struct {
 	accountRepository repositories.AccountRepositoryInterface
-	logger            logger.LoggerInterface
+	logger            slogger.LoggerInterface
 }
 
 func NewGetAccountUseCase(
-	logger logger.LoggerInterface,
+	logger slogger.LoggerInterface,
 	accountRepository repositories.AccountRepositoryInterface,
 ) GetAccountUseCaseInterface {
 	return &GetAccountUseCaseImp{
