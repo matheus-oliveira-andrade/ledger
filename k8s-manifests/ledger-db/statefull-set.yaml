@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ledger-db
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+  selector:
+    matchLabels:
+      component: ledger-postgres
+  serviceName: ledger-db-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: ledger-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15.2
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: volume-postgres
+              mountPath: /var/lib/postgresql/data
+            - name: script-volume
+              mountPath: /docker-entrypoint-initdb.d
+          env: 
+            - name: POSTGRES_DB
+              value: "Ledger"
+            - name: POSTGRES_USER
+              value: "db_user"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ledger-postgres-secrets
+                  key: password
+          resources:
+            requests:
+              memory: "200Mi"
+              cpu: "250m"
+            limits:
+              memory: "250Mi"
+              cpu: "500m"
+      volumes:
+        - name: script-volume
+          configMap:
+            name: ledger-service-sql-scripts
+  volumeClaimTemplates:
+    - metadata:
+        name: volume-postgres
+      spec:
+        storageClassName: ledger-postgres-storage-class
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 350Mi
