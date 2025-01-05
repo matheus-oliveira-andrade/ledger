@@ -27,19 +27,32 @@ spec:
               value: "account-service"
             - name: ENVIRONMENT
               value: "production"
+            - name: DB_HOST
+              value: "account-db-svc"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: db_user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: password
+            - name: DB_NAME
+              value: "Account"
           readinessProbe:
             initialDelaySeconds: 3
             periodSeconds: 60
             failureThreshold: 3
             httpGet:
-              path: /healthz
+              path: /api/healthz
               port: 8080                    
           livenessProbe:
             initialDelaySeconds: 5
             periodSeconds: 90
             failureThreshold: 3
             httpGet:
-              path: /healthz
+              path: /api/healthz
               port: 8080
           resources:
             requests:
