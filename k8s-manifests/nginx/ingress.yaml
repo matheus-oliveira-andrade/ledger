@@ -17,3 +17,10 @@ spec:
                 name: account-api-service
                 port:
                   number: 9000
+          - path: /ledger(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: ledger-api-service
+                port:
+                  number: 9000

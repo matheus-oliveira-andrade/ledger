@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ledger-api-service
+spec:
+  type: ClusterIP
+  selector:    
+      component: ledger-api
+  ports:
+  - port: 9000
+    targetPort: 8080
