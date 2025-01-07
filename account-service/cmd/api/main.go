@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"log/slog"
+	"net"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -11,10 +13,12 @@ import (
 	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/routes"
 	controllersV1 "github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/routes/v1"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/configs/settings"
+	accountgrpc "github.com/matheus-oliveira-andrade/ledger/account-service/grpc"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/repositories"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/slogger"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/usecases"
 	"github.com/spf13/viper"
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -32,6 +36,11 @@ func main() {
 	port := viper.GetInt("PORT")
 	if port == 0 {
 		panic("env variable PORT not loaded")
+	}
+
+	rpcPort := viper.GetInt("RPC_PORT")
+	if rpcPort == 0 {
+		panic("env variable RPC_PORT not loaded")
 	}
 
 	logger := slogger.NewLogger(serviceName, slog.LevelInfo, nil, uuid.NewString())
@@ -62,6 +71,8 @@ func main() {
 		})
 	})
 
+	startGRPCServer(logger, rpcPort)
+
 	startServer(logger, port, env, r)
 }
 
@@ -72,4 +83,30 @@ func startServer(l slogger.LoggerInterface, port int, env string, r *chi.Mux) {
 	if err != nil {
 		l.LogError("server failed to start", "error", err.Error())
 	}
+}
+
+func startGRPCServer(logger slogger.LoggerInterface, port int) {
+	listen, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+
+	s := grpc.NewServer()
+
+	dbConnection := repositories.NewDBConnection()
+	accountRepository := repositories.NewAccountRepository(dbConnection)
+	getAccountUseCase := usecases.NewGetAccountUseCase(logger, accountRepository)
+
+	accountGRPCServer := accountgrpc.NewServerGRPC(logger, getAccountUseCase)
+
+	accountgrpc.RegisterAccountServer(s, accountGRPCServer)
+
+	go func() {
+		logger.LogInformation("GRPC server started", "port", port)
+
+		if err := s.Serve(listen); err != nil {
+			logger.LogError("failed to serve GRPC", "error", err)
+			panic("failed to serve GRPC")
+		}
+	}()
 }
