@@ -1,0 +1,25 @@
+syntax = 'proto3';
+
+option go_package = "github.com/matheus-oliveira-andrade/ledger/account-service/accountgrpc";
+option java_multiple_files = true;
+option java_package = "ledger.account.service.grpc";
+option java_outer_classname = "AccountProto";
+
+package accountgrpc;
+
+import "google/protobuf/timestamp.proto";
+
+service Account {
+    rpc GetAccount (GetAccountRequest) returns (GetAccountResponse) {}
+}
+
+message GetAccountRequest {
+    string accId = 1;
+}
+
+message GetAccountResponse {
+    string id = 1;
+    string document = 2;
+    string name = 3;
+    google.protobuf.Timestamp createdAt = 4;
+}
