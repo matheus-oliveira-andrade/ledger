@@ -13,14 +13,9 @@ Ensure the following tools are installed:
 minikube start
 ```
 
-- Install nginx ingress
+- Apply manifests on cluster
 ```bash
-./install-nginx.sh
-```
-
-- Apply manifests
-```bash
-kubectl apply -Rf . 
+./up.sh
 ```
 
 ### Running the Application Locally
@@ -44,18 +39,18 @@ Now you can access services exposed via the Ingress controller at `localhost`
 In a new terminal
 ```sh
 kubectl port-forward svc/account-db-svc 5432:5432
+# kubectl port-forward svc/ledger-db-svc 5433:5433
 ```
 
 ### Deleting resouces
 To remove all resources created by the manifests
 
-- Delete all resources created with manifests file
+- Delete all resources applyed on cluster
 ```bash
-kubectl delete -Rf . 
+./down.sh
 ```
 
 - Delete Kubernetes cluster
 ```bash
 minikube delete
 ```
-
