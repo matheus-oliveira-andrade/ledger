@@ -4,10 +4,17 @@ metadata:
   name: ledger-service-sql-scripts
 data:
   init.sql: |
-    CREATE TABLE IF NOT EXISTS ledgers (
-       Id SERIAL PRIMARY KEY,       
-       Name VARCHAR(120),
-       Document VARCHAR(14),       
-       CreatedAt TIMESTAMP,
-       UpdatedAt TIMESTAMP
+    CREATE TABLE IF NOT EXISTS Transaction (
+       Id SERIAL PRIMARY KEY,
+       Description VARCHAR(120),
+       CreatedAt TIMESTAMP
+    );
+    
+    CREATE TABLE IF NOT EXISTS TransactionLine (
+       Id SERIAL PRIMARY KEY,
+       AccountId SERIAL,
+       TransactionId SERIAL REFERENCES Transaction(Id),
+       Amount BIGINT,
+       EntryType VARCHAR(50),
+       CreatedAt TIMESTAMP
     );
