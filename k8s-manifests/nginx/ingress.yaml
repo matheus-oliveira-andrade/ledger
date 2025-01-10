@@ -24,3 +24,10 @@ spec:
                 name: ledger-api-service
                 port:
                   number: 9000
+          - path: /account-grpc(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: account-api-service
+                port:
+                  number: 9001
