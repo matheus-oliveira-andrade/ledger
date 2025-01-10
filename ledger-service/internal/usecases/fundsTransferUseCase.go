@@ -42,7 +42,7 @@ func (u *FundsTransferUseCaseImp) Handle(ctx context.Context, accFrom, accTo, am
 	}
 	if !ok {
 		u.logger.LogError("acc from not found", "accFrom", accFrom)
-		return errors.New("acc FROM not found")
+		return errors.New("acc from not found")
 	}
 
 	ok, err = u.accountExist(ctx, accTo)
@@ -71,7 +71,11 @@ func (u *FundsTransferUseCaseImp) accountExist(ctx context.Context, accId int64)
 		AccId: strconv.FormatInt(int64(accId), 10),
 	}
 
+	u.logger.LogError("searching for acccount in account server", "accId", req.AccId)
+
 	acc, err := u.accountClient.GetAccount(ctx, &req)
 
-	return acc != nil, err
+	u.logger.LogError("searched for acccount in account server", "accId", req.AccId, "acc", acc, "err", err)
+
+	return acc != nil && acc.Id == req.AccId, err
 }
