@@ -9,8 +9,13 @@ import (
 	"github.com/google/uuid"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/cmd/api/middlewares"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/cmd/api/routes"
+	controllersV1 "github.com/matheus-oliveira-andrade/ledger/ledger-service/cmd/api/routes/v1"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/configs/settings"
+	accountgrpc "github.com/matheus-oliveira-andrade/ledger/ledger-service/grpc"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/repositories"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/services"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/slogger"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/usecases"
 	"github.com/spf13/viper"
 )
 
@@ -45,6 +50,22 @@ func main() {
 
 	r.Route("/api", func(apiRouter chi.Router) {
 		routes.NewHealthzRoute(logger).SetupHealthzRoutes(apiRouter)
+
+		apiRouter.Route("/v1", func(v1Router chi.Router) {
+			dbConnection := repositories.NewDBConnection()
+
+			transactionRepository := repositories.NewTransactionRepository(dbConnection)
+			transactionLineRepository := repositories.NewTransactionLineRepository(dbConnection)
+			transactionService := services.NewTransactionService(logger, transactionRepository, transactionLineRepository)
+
+			accountClient := accountgrpc.NewAccountGRPCClient()
+
+			fundsTransferUsecase := usecases.NewFundsTransferUseCase(logger, transactionService, accountClient)
+
+			controllersV1.
+				NewFundsTransferController(logger, fundsTransferUsecase).
+				RegisterRoutes(v1Router)
+		})
 	})
 
 	startServer(logger, port, env, r)

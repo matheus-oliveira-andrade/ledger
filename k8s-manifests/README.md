@@ -34,12 +34,13 @@ minikube tunnel
 Now you can access services exposed via the Ingress controller at `localhost` 
 
 
-### Exposing database locally
+### Exposing database and GRPC server locally
 
 In a new terminal
 ```sh
 kubectl port-forward svc/account-db-svc 5432:5432
 # kubectl port-forward svc/ledger-db-svc 5433:5433
+# kubectl port-forward svc/account-api-service 9001:9001 # account GRPC
 ```
 
 ### Deleting resouces
