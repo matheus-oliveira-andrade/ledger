@@ -9,11 +9,17 @@ type BalanceServiceInterface interface {
 	CalculateBalance(accId int64) (int64, error)
 }
 
-type BalanceService struct {
+type BalanceServiceImp struct {
 	transactionLineRepository repositories.TransactionLineRepositoryInterface
 }
 
-func (s *BalanceService) CalculateBalance(accId int64) (int64, error) {
+func NewBalanceService(transactionLineRepository repositories.TransactionLineRepositoryInterface) *BalanceServiceImp {
+	return &BalanceServiceImp{
+		transactionLineRepository: transactionLineRepository,
+	}
+}
+
+func (s *BalanceServiceImp) CalculateBalance(accId int64) (int64, error) {
 	lines, err := s.transactionLineRepository.GetTransactions(accId)
 	if err != nil {
 		return 0, err
