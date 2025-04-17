@@ -38,7 +38,7 @@ func (r *TransactionLineRepositoryImp) Create(line *domain.TransactionLine) (str
 func (r *TransactionLineRepositoryImp) GetTransactions(accId int64) (*[]domain.TransactionLine, error) {
 	rows, err := r.db.Query(`
 		SELECT Id, AccountId, TransactionId, Amount, EntryType, CreatedAt
-		FROM accounts
+		FROM TransactionLine
 		WHERE AccountId = $1
 	`, accId)
 
