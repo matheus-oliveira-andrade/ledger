@@ -8,6 +8,7 @@ import (
 
 type TransactionLineRepositoryInterface interface {
 	Create(acc *domain.TransactionLine) (string, error)
+	GetTransactions(accId int64) (*[]domain.TransactionLine, error)
 }
 
 type TransactionLineRepositoryImp struct {
@@ -32,4 +33,35 @@ func (r *TransactionLineRepositoryImp) Create(line *domain.TransactionLine) (str
 	err := row.Scan(&id)
 
 	return id, err
+}
+
+func (r *TransactionLineRepositoryImp) GetTransactions(accId int64) (*[]domain.TransactionLine, error) {
+	rows, err := r.db.Query(`
+		SELECT Id, AccountId, TransactionId, Amount, EntryType, CreatedAt
+		FROM accounts
+		WHERE AccountId = $1
+	`, accId)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var lines []domain.TransactionLine
+	for rows.Next() {
+		var line domain.TransactionLine
+		err := rows.Scan(&line.Id, &line.AccountId, &line.TransactionId, &line.Amount, &line.EntryType, &line.CreatedAt)
+
+		if err != nil {
+			return nil, err
+		}
+
+		lines = append(lines, line)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return &lines, nil
 }
