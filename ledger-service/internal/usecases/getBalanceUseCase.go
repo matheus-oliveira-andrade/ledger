@@ -6,7 +6,7 @@ import (
 )
 
 type GetBalanceUseCaseInterface interface {
-	Handle(accId int64) error
+	Handle(accId int64) (int64, error)
 }
 
 type GetBalanceUseCaseImp struct {
