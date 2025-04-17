@@ -19,16 +19,19 @@ type FundsTransferUseCaseImp struct {
 	logger             slogger.LoggerInterface
 	transactionService services.TransactionServiceInterface
 	accountClient      accountgrpc.AccountClient
+	balanceService     services.BalanceServiceInterface
 }
 
 func NewFundsTransferUseCase(
 	logger slogger.LoggerInterface,
 	transactionService services.TransactionServiceInterface,
-	accountClient accountgrpc.AccountClient) *FundsTransferUseCaseImp {
+	accountClient accountgrpc.AccountClient,
+	balanceService services.BalanceServiceInterface) *FundsTransferUseCaseImp {
 	return &FundsTransferUseCaseImp{
 		logger:             logger,
 		transactionService: transactionService,
 		accountClient:      accountClient,
+		balanceService:     balanceService,
 	}
 }
 
@@ -43,6 +46,16 @@ func (u *FundsTransferUseCaseImp) Handle(ctx context.Context, accFrom, accTo, am
 	if !ok {
 		u.logger.LogError("acc from not found", "accFrom", accFrom)
 		return errors.New("acc from not found")
+	}
+
+	balance, err := u.getBalance(accFrom)
+	if err != nil {
+		u.logger.LogError("error get acc balance", "accFrom", accFrom, "error", err)
+		return err
+	}
+	if balance < amount {
+		u.logger.LogError("insufficient balance", "accFrom", accFrom)
+		return errors.New("insufficient balance")
 	}
 
 	ok, err = u.accountExist(ctx, accTo)
@@ -78,4 +91,8 @@ func (u *FundsTransferUseCaseImp) accountExist(ctx context.Context, accId int64)
 	u.logger.LogError("searched for acccount in account server", "accId", req.AccId, "acc", acc, "err", err)
 
 	return acc != nil && acc.Id == req.AccId, err
+}
+
+func (u *FundsTransferUseCaseImp) getBalance(accId int64) (int64, error) {
+	return u.balanceService.CalculateBalance(accId)
 }
