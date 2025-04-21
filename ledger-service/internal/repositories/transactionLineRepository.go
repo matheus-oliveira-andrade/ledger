@@ -7,7 +7,7 @@ import (
 )
 
 type TransactionLineRepositoryInterface interface {
-	Create(acc *domain.TransactionLine) (string, error)
+	Create(line *domain.TransactionLine) (string, error)
 	GetTransactions(accId int64) (*[]domain.TransactionLine, error)
 }
 
