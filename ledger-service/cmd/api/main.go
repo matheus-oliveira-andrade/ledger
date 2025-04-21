@@ -61,10 +61,16 @@ func main() {
 
 			accountClient := accountgrpc.NewAccountGRPCClient()
 
-			fundsTransferUsecase := usecases.NewFundsTransferUseCase(logger, transactionService, accountClient, balanceService)
+			fundsTransferUseCase := usecases.NewFundsTransferUseCase(logger, transactionService, accountClient, balanceService)
 
 			controllersV1.
-				NewFundsTransferController(logger, fundsTransferUsecase).
+				NewFundsTransferController(logger, fundsTransferUseCase).
+				RegisterRoutes(v1Router)
+
+			getBalanceUseCase := usecases.NewGetBalanceUseCase(logger, balanceService)
+
+			controllersV1.
+				NewBalanceController(logger, getBalanceUseCase).
 				RegisterRoutes(v1Router)
 		})
 	})
