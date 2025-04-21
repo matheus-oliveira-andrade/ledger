@@ -25,6 +25,5 @@ func (s *BalanceServiceImp) CalculateBalance(accId int64) (int64, error) {
 		return 0, err
 	}
 
-	balanceCalculator := domain.BalanceCalculator{}
-	return balanceCalculator.Calculate(*lines)
+	return domain.NewBalanceCalculator().Calculate(*lines)
 }
