@@ -11,3 +11,9 @@ data:
        CreatedAt TIMESTAMP,
        UpdatedAt TIMESTAMP
     );
+
+    -- Insert initial accounts
+    INSERT INTO accounts (Name, Document, CreatedAt, UpdatedAt)
+    VALUES 
+      ('Account One', '01234567890', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+      ('Account Two', '09876543210', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

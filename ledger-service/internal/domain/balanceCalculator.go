@@ -7,6 +7,10 @@ import (
 type BalanceCalculator struct {
 }
 
+func NewBalanceCalculator() *BalanceCalculator {
+	return &BalanceCalculator{}
+}
+
 func (bc *BalanceCalculator) Calculate(lines []TransactionLine) (int64, error) {
 	var creditsSum int64 = 0
 	var debitsSum int64 = 0

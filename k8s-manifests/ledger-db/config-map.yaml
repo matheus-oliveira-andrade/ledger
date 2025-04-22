@@ -18,3 +18,17 @@ data:
        EntryType VARCHAR(50),
        CreatedAt TIMESTAMP
     );
+
+    -- Insert initial balance for account 01234567890
+    INSERT INTO Transaction (Description, CreatedAt) 
+    VALUES ('Initial credit for account 01234567890', CURRENT_TIMESTAMP);
+    
+    INSERT INTO TransactionLine (AccountId, TransactionId, Amount, EntryType, CreatedAt)
+    VALUES (1, currval('transaction_id_seq'), 100000, 'CREDIT', CURRENT_TIMESTAMP);
+
+    -- Insert initial balance for account 09876543210
+    INSERT INTO Transaction (Description, CreatedAt) 
+    VALUES ('Initial credit for account 09876543210', CURRENT_TIMESTAMP);
+    
+    INSERT INTO TransactionLine (AccountId, TransactionId, Amount, EntryType, CreatedAt)
+    VALUES (2, currval('transaction_id_seq'), 100000, 'CREDIT', CURRENT_TIMESTAMP);
