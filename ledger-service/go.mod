@@ -3,6 +3,7 @@ module github.com/matheus-oliveira-andrade/ledger/ledger-service
 go 1.23.2
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/go-chi/chi v1.5.5
 	github.com/golang/protobuf v1.5.4
 	github.com/google/uuid v1.6.0
