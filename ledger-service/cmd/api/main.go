@@ -72,6 +72,13 @@ func main() {
 			controllersV1.
 				NewBalanceController(logger, getBalanceUseCase).
 				RegisterRoutes(v1Router)
+
+			statementRepository := repositories.NewStatementRepository(dbConnection)
+			getStatementUseCase := usecases.NewGetStatementUseCase(logger, statementRepository)
+
+			controllersV1.
+				NewStatementController(logger, getStatementUseCase).
+				RegisterRoutes(v1Router)
 		})
 	})
 
