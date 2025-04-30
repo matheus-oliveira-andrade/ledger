@@ -3,6 +3,7 @@ package repositories_test
 import (
 	"database/sql"
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/lib/pq"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/repositories"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -51,11 +52,11 @@ func TestGetStatementTransactions_NoRows(t *testing.T) {
 	accId := int64(12345)
 	startDate := time.Now()
 	endDate := time.Now().AddDate(0, 0, 2)
-	entriesType := "DEBIT,CREDIT"
+	entriesType := []string{"DEBIT", "CREDIT"}
 
 	mock.
 		ExpectQuery("SELECT tl.AccountId, t.Description, tl.Amount, tl.EntryType, t.CreatedAt").
-		WithArgs(accId, startDate, endDate, entriesType, 3, 1).
+		WithArgs(accId, startDate, endDate, pq.Array(entriesType), 3, 0).
 		WillReturnRows(sqlmock.NewRows([]string{"AccountId", "Description", "Amount", "EntryType", "CreatedAt"}))
 
 	repository := repositories.NewStatementRepository(db)
@@ -83,7 +84,7 @@ func TestGetStatementTransactions_Success(t *testing.T) {
 	accId := int64(12345)
 	startDate := time.Now()
 	endDate := time.Now().AddDate(0, 0, 2)
-	entriesType := "DEBIT,CREDIT"
+	entriesType := []string{"DEBIT", "CREDIT"}
 
 	rows := sqlmock.
 		NewRows([]string{"AccountId", "Description", "Amount", "EntryType", "CreatedAt"}).
@@ -92,7 +93,7 @@ func TestGetStatementTransactions_Success(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT tl.AccountId, t.Description, tl.Amount, tl.EntryType, t.CreatedAt").
-		WithArgs(accId, startDate, endDate, entriesType, 2, 0).
+		WithArgs(accId, startDate, endDate, pq.Array(entriesType), 2, 0).
 		WillReturnRows(rows)
 
 	repository := repositories.NewStatementRepository(db)
