@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"database/sql"
-	"strings"
+	"github.com/lib/pq"
 	"time"
 
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/domain"
@@ -22,8 +22,6 @@ func NewStatementRepository(db *sql.DB) *StatementRepositoryImp {
 	}
 }
 func (r *StatementRepositoryImp) GetStatementTransactions(accId int64, startDate time.Time, endDate time.Time, entriesType []string, limit int, page int) (*[]domain.StatementTransaction, bool, error) {
-	entriesTypeFormatted := strings.Join(entriesType, ",")
-
 	if page <= 0 {
 		page = 1
 	}
@@ -38,10 +36,12 @@ func (r *StatementRepositoryImp) GetStatementTransactions(accId int64, startDate
 		SELECT tl.AccountId, t.Description, tl.Amount, tl.EntryType, t.CreatedAt
 		FROM TransactionLine tl
 		INNER JOIN Transaction t ON tl.TransactionId = t.Id		
-		WHERE tl.AccountId = $1 AND t.CreatedAt BETWEEN $2 AND $3 AND tl.EntryType IN ($4)
-		ORDER BY t.CreatedAt ASC
+		WHERE tl.AccountId = $1 
+	      AND t.CreatedAt BETWEEN $2 AND $3 
+		  AND tl.EntryType = ANY($4)
+		ORDER BY t.CreatedAt DESC
 		LIMIT $5 OFFSET $6
-	`, accId, startDate, endDate, entriesTypeFormatted, limit+1, offset)
+	`, accId, startDate, endDate, pq.Array(entriesType), limit+1, offset)
 
 	if err != nil {
 		return nil, false, err
