@@ -1,12 +1,12 @@
 package middlewares_test
 
 import (
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/ports/http/middlewares"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/ports/http/middlewares/mocks"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/middlewares"
-	middlewares_mocks "github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/middlewares/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

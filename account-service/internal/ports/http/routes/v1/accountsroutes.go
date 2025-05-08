@@ -3,12 +3,12 @@ package controllersV1
 import (
 	"encoding/json"
 	"errors"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/routes/utils"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/ports/http/routes/utils"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils/slogger"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/chi"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/slogger"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/usecases"
 )
 

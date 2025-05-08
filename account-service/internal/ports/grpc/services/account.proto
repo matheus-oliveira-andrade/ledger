@@ -2,7 +2,7 @@ syntax = 'proto3';
 
 option go_package = "github.com/matheus-oliveira-andrade/ledger/account-service/accountgrpc";
 option java_multiple_files = true;
-option java_package = "ledger.account.service.grpc";
+option java_package = "ledger.account.service.services";
 option java_outer_classname = "AccountProto";
 
 package accountgrpc;

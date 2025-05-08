@@ -2,32 +2,32 @@ package accountgrpc
 
 import (
 	"context"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils/slogger"
 
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/slogger"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/usecases"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type Server struct {
+type AccountServiceImp struct {
 	UnimplementedAccountServer
 
 	logger            slogger.LoggerInterface
-	getAccountUsecase usecases.GetAccountUseCaseInterface
+	getAccountUseCase usecases.GetAccountUseCaseInterface
 }
 
-func NewServerGRPC(
+func NewAccountService(
 	logger slogger.LoggerInterface,
-	getAccountUseCase usecases.GetAccountUseCaseInterface) *Server {
-	return &Server{
+	getAccountUseCase usecases.GetAccountUseCaseInterface) *AccountServiceImp {
+	return &AccountServiceImp{
 		logger:            logger,
-		getAccountUsecase: getAccountUseCase,
+		getAccountUseCase: getAccountUseCase,
 	}
 }
 
-func (s *Server) GetAccount(_ context.Context, request *GetAccountRequest) (*GetAccountResponse, error) {
+func (s *AccountServiceImp) GetAccount(_ context.Context, request *GetAccountRequest) (*GetAccountResponse, error) {
 	s.logger.LogInformation("searching account", "accId", request.AccId)
 
-	acc, err := s.getAccountUsecase.Handle(request.AccId)
+	acc, err := s.getAccountUseCase.Handle(request.AccId)
 	if err != nil {
 		s.logger.LogError("error getting account", "error", err)
 		return nil, err
