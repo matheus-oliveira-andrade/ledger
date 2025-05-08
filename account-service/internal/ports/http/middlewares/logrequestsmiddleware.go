@@ -1,11 +1,10 @@
 package middlewares
 
 import (
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils/slogger"
 	"log/slog"
 	"net/http"
 	"time"
-
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/slogger"
 )
 
 func UseLogRequestsMiddleware(logger slogger.LoggerInterface) func(next http.Handler) http.Handler {

@@ -1,12 +1,12 @@
 package middlewares_test
 
 import (
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/ports/http/middlewares"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/cmd/api/middlewares"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils"
 	"github.com/stretchr/testify/assert"
 )

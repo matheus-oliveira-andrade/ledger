@@ -2,10 +2,10 @@ package usecases
 
 import (
 	"errors"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils/slogger"
 
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/domain"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/repositories"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/slogger"
 )
 
 type CreateAccountUseCaseInterface interface {

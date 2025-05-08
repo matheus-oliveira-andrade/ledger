@@ -3,7 +3,7 @@ package usecases
 import (
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/domain"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/repositories"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/slogger"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils/slogger"
 )
 
 type GetAccountUseCaseInterface interface {

@@ -10,6 +10,6 @@ RUN go mod download && go mod verify
 
 COPY . .
 
-RUN go build cmd/api/main.go
+RUN go build cmd/main.go
 
 ENTRYPOINT [ "./main" ]
