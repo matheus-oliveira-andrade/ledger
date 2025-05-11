@@ -3,12 +3,12 @@ package usecases
 import (
 	"context"
 	"errors"
+	accountgrpc "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 	"strconv"
 
-	accountgrpc "github.com/matheus-oliveira-andrade/ledger/ledger-service/grpc"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/domain"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/services"
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/slogger"
 )
 
 type FundsTransferUseCaseInterface interface {

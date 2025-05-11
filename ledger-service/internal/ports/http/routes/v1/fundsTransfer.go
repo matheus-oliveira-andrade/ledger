@@ -2,11 +2,11 @@ package controllersV1
 
 import (
 	"encoding/json"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http/routes/utils"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/cmd/api/routes/utils"
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/slogger"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/usecases"
 )
 

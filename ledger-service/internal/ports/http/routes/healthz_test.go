@@ -1,13 +1,13 @@
 package routes_test
 
 import (
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http/routes"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http/routes/mocks"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/go-chi/chi"
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/cmd/api/routes"
-	routes_mocks "github.com/matheus-oliveira-andrade/ledger/ledger-service/cmd/api/routes/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

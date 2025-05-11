@@ -3,7 +3,7 @@ package usecases_test
 import (
 	"context"
 	"errors"
-	accountgrpc "github.com/matheus-oliveira-andrade/ledger/ledger-service/grpc"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
 	usecases_mocks "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/usecases/mocks"
 	"strconv"
 	"testing"

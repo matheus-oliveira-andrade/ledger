@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/domain"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/repositories"
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/slogger"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 )
 
 type TransactionServiceInterface interface {

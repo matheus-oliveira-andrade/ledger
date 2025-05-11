@@ -1,10 +1,10 @@
 package routes
 
 import (
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/slogger"
 )
 
 type HealthzRoute struct {
@@ -25,7 +25,7 @@ func (r *HealthzRoute) handle(w http.ResponseWriter, _ *http.Request) {
 	r.logger.LogInformation("handling healthz")
 
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK"))
+	_, _ = w.Write([]byte("OK"))
 
 	r.logger.LogInformation("handled healthz")
 }
