@@ -2,11 +2,10 @@ package slogger_test
 
 import (
 	"bytes"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 	"log/slog"
 	"strings"
 	"testing"
-
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/slogger"
 )
 
 func TestLogger_LogInformation(t *testing.T) {

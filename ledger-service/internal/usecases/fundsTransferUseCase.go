@@ -3,12 +3,12 @@ package usecases
 import (
 	"context"
 	"errors"
+	accountgrpc2 "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 	"strconv"
 
-	accountgrpc "github.com/matheus-oliveira-andrade/ledger/ledger-service/grpc"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/domain"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/services"
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/slogger"
 )
 
 type FundsTransferUseCaseInterface interface {
@@ -18,14 +18,14 @@ type FundsTransferUseCaseInterface interface {
 type FundsTransferUseCaseImp struct {
 	logger             slogger.LoggerInterface
 	transactionService services.TransactionServiceInterface
-	accountClient      accountgrpc.AccountClient
+	accountClient      accountgrpc2.AccountClient
 	balanceService     services.BalanceServiceInterface
 }
 
 func NewFundsTransferUseCase(
 	logger slogger.LoggerInterface,
 	transactionService services.TransactionServiceInterface,
-	accountClient accountgrpc.AccountClient,
+	accountClient accountgrpc2.AccountClient,
 	balanceService services.BalanceServiceInterface) *FundsTransferUseCaseImp {
 	return &FundsTransferUseCaseImp{
 		logger:             logger,
@@ -84,7 +84,7 @@ func (u *FundsTransferUseCaseImp) Handle(ctx context.Context, accFrom, accTo, am
 }
 
 func (u *FundsTransferUseCaseImp) accountExist(ctx context.Context, accId int64) (bool, error) {
-	req := accountgrpc.GetAccountRequest{
+	req := accountgrpc2.GetAccountRequest{
 		AccId: strconv.FormatInt(accId, 10),
 	}
 

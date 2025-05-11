@@ -2,16 +2,16 @@ package http
 
 import (
 	"fmt"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
 	middlewares2 "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http/middlewares"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http/routes"
 	controllersV12 "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http/routes/v1"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 	"net/http"
 
 	"github.com/go-chi/chi"
-	accountgrpc "github.com/matheus-oliveira-andrade/ledger/ledger-service/grpc"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/repositories"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/services"
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/slogger"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/usecases"
 )
 

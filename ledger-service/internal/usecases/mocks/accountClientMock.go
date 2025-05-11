@@ -2,7 +2,7 @@ package usecases_mocks
 
 import (
 	"context"
-	accountgrpc "github.com/matheus-oliveira-andrade/ledger/ledger-service/grpc"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/grpc"
 )

@@ -4,7 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/configs/settings"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http"
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/slogger"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 	"github.com/spf13/viper"
 	"log/slog"
 )
