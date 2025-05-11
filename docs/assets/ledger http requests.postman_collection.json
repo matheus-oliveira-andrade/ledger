@@ -1,0 +1,217 @@
+{
+	"info": {
+		"_postman_id": "eb96f010-40ed-4ab0-88d0-eadc26d1efef",
+		"name": "ledger http requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10173360"
+	},
+	"item": [
+		{
+			"name": "account svc",
+			"item": [
+				{
+					"name": "account",
+					"item": [
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"document\": \"117774277964\",\r\n    \"name\": \"name test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost/account/api/v1/accounts",
+									"host": [
+										"localhost"
+									],
+									"path": [
+										"account",
+										"api",
+										"v1",
+										"accounts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost/account/api/v1/accounts/2",
+									"host": [
+										"localhost"
+									],
+									"path": [
+										"account",
+										"api",
+										"v1",
+										"accounts",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost/account/api/healthz",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"account",
+								"api",
+								"healthz"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ledger svc",
+			"item": [
+				{
+					"name": "funds transfer",
+					"item": [
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"accFrom\": 1,\r\n    \"accTo\": 2,\r\n    \"amount\": 10000\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost/ledger/api/v1/funds-transfer",
+									"host": [
+										"localhost"
+									],
+									"path": [
+										"ledger",
+										"api",
+										"v1",
+										"funds-transfer"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "balance",
+					"item": [
+						{
+							"name": "get",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost/ledger/api/v1/balance/1",
+									"host": [
+										"localhost"
+									],
+									"path": [
+										"ledger",
+										"api",
+										"v1",
+										"balance",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "statement",
+					"item": [
+						{
+							"name": "get",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost/ledger/api/v1/statement/1?period=30&page=2&limit=1&transactionType=ALL",
+									"host": [
+										"localhost"
+									],
+									"path": [
+										"ledger",
+										"api",
+										"v1",
+										"statement",
+										"1"
+									],
+									"query": [
+										{
+											"key": "period",
+											"value": "30"
+										},
+										{
+											"key": "page",
+											"value": "2"
+										},
+										{
+											"key": "limit",
+											"value": "1"
+										},
+										{
+											"key": "transactionType",
+											"value": "ALL"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost/ledger/api/healthz",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"ledger",
+								"api",
+								"healthz"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

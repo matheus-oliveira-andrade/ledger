@@ -33,6 +33,7 @@ minikube tunnel
 ```
 Now you can access services exposed via the Ingress controller at `localhost` 
 
+*Obs.: all HTTP requests can be found [here](../docs/assets/ledger%20http%20requests.postman_collection.json)*
 
 ### Exposing database and GRPC server locally
 
