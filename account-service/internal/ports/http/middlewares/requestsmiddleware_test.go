@@ -17,7 +17,7 @@ func TestUseLogRequestsMiddleware(t *testing.T) {
 	})
 
 	logger := &middlewares_mocks.MockLogger{}
-	logger.On("LogInformation", "Request received", mock.Anything).Return()
+	logger.On("LogInformationContext", mock.Anything, "Request received", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
 
 	middleware := middlewares.UseLogRequestsMiddleware(logger)
 

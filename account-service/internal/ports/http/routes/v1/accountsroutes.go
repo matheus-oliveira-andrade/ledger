@@ -3,10 +3,11 @@ package controllersV1
 import (
 	"encoding/json"
 	"errors"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/ports/http/routes/utils"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils/slogger"
 	"net/http"
 	"time"
+
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/ports/http/routes/utils"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils/slogger"
 
 	"github.com/go-chi/chi"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/usecases"
@@ -71,7 +72,7 @@ func (ar *AccountsController) getAccountHandle(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	acc, err := ar.getAccountUseCase.Handle(accId)
+	acc, err := ar.getAccountUseCase.Handle(r.Context(), accId)
 
 	if err != nil {
 		utils.RenderErrorJsonResponse(w, err)

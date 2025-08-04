@@ -19,7 +19,8 @@ func UseLogRequestsMiddleware(logger slogger.LoggerInterface) func(next http.Han
 			next.ServeHTTP(ww, r)
 			duration := time.Since(start)
 
-			logger.LogInformation(
+			logger.LogInformationContext(
+				r.Context(),
 				"Request received",
 				slog.String("method", r.Method),
 				slog.String("path", r.URL.Path),
