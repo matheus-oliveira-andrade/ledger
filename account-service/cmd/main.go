@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/google/uuid"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/configs/settings"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/ports/grpc"
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/ports/http"
@@ -33,7 +32,7 @@ func main() {
 		panic("env variable RPC_PORT not loaded")
 	}
 
-	logger := slogger.NewLogger(serviceName, slog.LevelInfo, nil, uuid.NewString())
+	logger := slogger.NewLogger(serviceName, slog.LevelInfo, nil)
 
 	grpcServer := grpc.NewServerWrapper(logger, rpcPort)
 	grpcServer.Setup()

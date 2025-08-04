@@ -2,6 +2,7 @@ package accountgrpc
 
 import (
 	"context"
+
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils/slogger"
 
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/usecases"
@@ -24,10 +25,10 @@ func NewAccountService(
 	}
 }
 
-func (s *AccountServiceImp) GetAccount(_ context.Context, request *GetAccountRequest) (*GetAccountResponse, error) {
+func (s *AccountServiceImp) GetAccount(ctx context.Context, request *GetAccountRequest) (*GetAccountResponse, error) {
 	s.logger.LogInformation("searching account", "accId", request.AccId)
 
-	acc, err := s.getAccountUseCase.Handle(request.AccId)
+	acc, err := s.getAccountUseCase.Handle(ctx, request.AccId)
 	if err != nil {
 		s.logger.LogError("error getting account", "error", err)
 		return nil, err

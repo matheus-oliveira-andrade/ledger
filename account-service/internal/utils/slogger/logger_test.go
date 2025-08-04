@@ -2,16 +2,18 @@ package slogger_test
 
 import (
 	"bytes"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils/slogger"
+	"context"
 	"log/slog"
 	"strings"
 	"testing"
+
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils/slogger"
 )
 
 func TestLogger_LogInformation(t *testing.T) {
 	// arrange
 	var buf bytes.Buffer
-	log := slogger.NewLogger("test_service", slog.LevelInfo, &buf, "")
+	log := slogger.NewLogger("test_service", slog.LevelInfo, &buf)
 
 	// assert
 	log.LogInformation("message test", slog.String("name", "test"))
@@ -26,7 +28,7 @@ func TestLogger_LogInformation(t *testing.T) {
 func TestLogger_LogWarning(t *testing.T) {
 	// arrange
 	var buf bytes.Buffer
-	log := slogger.NewLogger("test_service", slog.LevelInfo, &buf, "")
+	log := slogger.NewLogger("test_service", slog.LevelInfo, &buf)
 
 	// assert
 	log.LogWarning("message test", slog.String("name", "test"))
@@ -41,7 +43,7 @@ func TestLogger_LogWarning(t *testing.T) {
 func TestLogger_LogError(t *testing.T) {
 	// arrange
 	var buf bytes.Buffer
-	log := slogger.NewLogger("test_service", slog.LevelInfo, &buf, "")
+	log := slogger.NewLogger("test_service", slog.LevelInfo, &buf)
 
 	// assert
 	log.LogError("message test", slog.String("name", "test"))
@@ -56,7 +58,7 @@ func TestLogger_LogError(t *testing.T) {
 func TestLogger_MinLevel(t *testing.T) {
 	// arrange
 	var buf bytes.Buffer
-	log := slogger.NewLogger("test_service", slog.LevelWarn, &buf, "")
+	log := slogger.NewLogger("test_service", slog.LevelWarn, &buf)
 
 	// assert
 	log.LogInformation("should not appears")
@@ -71,5 +73,53 @@ func TestLogger_MinLevel(t *testing.T) {
 
 	if strings.Contains(output, "should not appears") {
 		t.Errorf("expected log message not appear in output, got %v", output)
+	}
+}
+
+func TestLogger_LogInformationContext(t *testing.T) {
+	// arrange
+	var buf bytes.Buffer
+	log := slogger.NewLogger("test_service", slog.LevelInfo, &buf)
+	ctx := context.TODO()
+
+	// assert
+	log.LogInformationContext(ctx, "message test", slog.String("name", "test"))
+
+	// act
+	output := buf.String()
+	if !strings.Contains(output, `"msg":"message test"`) || !strings.Contains(output, `"level":"INFO"`) {
+		t.Errorf("expected log message in output, got %v", output)
+	}
+}
+
+func TestLogger_LogWarningContext(t *testing.T) {
+	// arrange
+	var buf bytes.Buffer
+	log := slogger.NewLogger("test_service", slog.LevelInfo, &buf)
+	ctx := context.TODO()
+
+	// assert
+	log.LogWarningContext(ctx, "message test", slog.String("name", "test"))
+
+	// act
+	output := buf.String()
+	if !strings.Contains(output, `"msg":"message test"`) || !strings.Contains(output, `"level":"WARN"`) {
+		t.Errorf("expected log message in output, got %v", output)
+	}
+}
+
+func TestLogger_LogErrorContext(t *testing.T) {
+	// arrange
+	var buf bytes.Buffer
+	log := slogger.NewLogger("test_service", slog.LevelInfo, &buf)
+	ctx := context.TODO()
+
+	// assert
+	log.LogErrorContext(ctx, "message test", slog.String("name", "test"))
+
+	// act
+	output := buf.String()
+	if !strings.Contains(output, `"msg":"message test"`) || !strings.Contains(output, `"level":"ERROR"`) {
+		t.Errorf("expected log message in output, got %v", output)
 	}
 }
