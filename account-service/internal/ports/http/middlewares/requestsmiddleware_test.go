@@ -2,7 +2,7 @@ package middlewares_test
 
 import (
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/ports/http/middlewares"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/ports/http/middlewares/mocks"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils/slogger"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -16,7 +16,7 @@ func TestUseLogRequestsMiddleware(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	logger := &middlewares_mocks.MockLogger{}
+	logger := &slogger.MockLogger{}
 	logger.On("LogInformationContext", mock.Anything, "Request received", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return()
 
 	middleware := middlewares.UseLogRequestsMiddleware(logger)

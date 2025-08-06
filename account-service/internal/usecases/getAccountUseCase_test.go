@@ -3,6 +3,7 @@ package usecases_test
 import (
 	"context"
 	"errors"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils/slogger"
 	"testing"
 
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/domain"
@@ -19,7 +20,7 @@ func TestHandle_Err(t *testing.T) {
 	accountRepositoryMock := usecases_mocks.MockAccountRepository{}
 	accountRepositoryMock.On("GetById", accId).Return((*domain.Account)(nil), errors.New("generic error here"))
 
-	loggerMock := usecases_mocks.MockLogger{}
+	loggerMock := slogger.MockLogger{}
 	loggerMock.On("LogInformationContext", mock.Anything, "getting account by id", mock.Anything).Return()
 	loggerMock.On("LogErrorContext", mock.Anything, "error getting account by id", mock.Anything).Return()
 
@@ -44,7 +45,7 @@ func TestHandle_NotFound(t *testing.T) {
 	accountRepositoryMock := usecases_mocks.MockAccountRepository{}
 	accountRepositoryMock.On("GetById", accId).Return((*domain.Account)(nil), nil)
 
-	loggerMock := usecases_mocks.MockLogger{}
+	loggerMock := slogger.MockLogger{}
 	loggerMock.On("LogInformationContext", mock.Anything, "getting account by id", mock.Anything).Return()
 	loggerMock.On("LogInformationContext", mock.Anything, "searched account by id", mock.Anything).Return()
 
@@ -71,7 +72,7 @@ func TestHandle_Success(t *testing.T) {
 	accountRepositoryMock := usecases_mocks.MockAccountRepository{}
 	accountRepositoryMock.On("GetById", accId, mock.Anything).Return(acc, nil)
 
-	loggerMock := usecases_mocks.MockLogger{}
+	loggerMock := slogger.MockLogger{}
 	loggerMock.On("LogInformationContext", mock.Anything, "getting account by id", mock.Anything).Return()
 	loggerMock.On("LogInformationContext", mock.Anything, "searched account by id", mock.Anything).Return()
 

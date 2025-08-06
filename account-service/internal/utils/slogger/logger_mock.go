@@ -1,4 +1,4 @@
-package usecases_mocks
+package slogger
 
 import (
 	"context"
