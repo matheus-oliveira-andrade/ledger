@@ -2,7 +2,7 @@ package routes_test
 
 import (
 	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/ports/http/routes"
-	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/ports/http/routes/mocks"
+	"github.com/matheus-oliveira-andrade/ledger/account-service/internal/utils/slogger"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -14,7 +14,7 @@ import (
 
 func TestHealthzHandle(t *testing.T) {
 	// arrange
-	loggerMock := &routes_mocks.MockLogger{}
+	loggerMock := &slogger.MockLogger{}
 	loggerMock.On("LogInformation", "handled healthz", mock.Anything).Return()
 	loggerMock.On("LogInformation", "handling healthz", mock.Anything).Return()
 
