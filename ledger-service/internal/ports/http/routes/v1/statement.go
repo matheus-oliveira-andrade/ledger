@@ -33,7 +33,7 @@ func (c *StatementController) RegisterRoutes(router chi.Router) {
 }
 
 func (c *StatementController) getStatementHandler(w http.ResponseWriter, r *http.Request) {
-	c.logger.LogInformation("processing get balance")
+	c.logger.LogInformationContext(r.Context(), "processing get balance")
 
 	accIdStr := chi.URLParam(r, "accountId")
 	if accIdStr == "" {
@@ -44,7 +44,7 @@ func (c *StatementController) getStatementHandler(w http.ResponseWriter, r *http
 
 	transactionType, period, limit, page := c.readGetStatementQueryParams(r)
 
-	result, err := c.getStatementUseCase.Handle(accId, transactionType, period, limit, page)
+	result, err := c.getStatementUseCase.Handle(r.Context(), accId, transactionType, period, limit, page)
 
 	if err != nil {
 		utils.RenderErrorJsonResponse(w, err)

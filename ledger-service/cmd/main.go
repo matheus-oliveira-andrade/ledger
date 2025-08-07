@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/google/uuid"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/configs/settings"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
@@ -26,7 +25,7 @@ func main() {
 		panic("env variable PORT not loaded")
 	}
 
-	logger := slogger.NewLogger(serviceName, slog.LevelInfo, nil, uuid.NewString())
+	logger := slogger.NewLogger(serviceName, slog.LevelInfo, nil)
 
 	httpServer := http.NewServerWrapper(serviceName, logger, port, env)
 	httpServer.Setup()

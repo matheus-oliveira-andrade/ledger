@@ -5,8 +5,10 @@ import (
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/domain"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/usecases"
 	usecases_mocks "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/usecases/mocks"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"golang.org/x/net/context"
 	"testing"
 	"time"
 )
@@ -25,18 +27,18 @@ func TestHandle_Error(t *testing.T) {
 		On("GetStatementTransactions", accountId, mock.Anything, mock.Anything, entriesType, 2, 0).
 		Return(&[]domain.StatementTransaction{}, false, errors.New("error"))
 
-	mockLogger := usecases_mocks.MockLogger{}
+	mockLogger := slogger.MockLogger{}
 	mockLogger.
-		On("LogInformation", mock.Anything, mock.Anything).
+		On("LogInformationContext", mock.Anything, mock.Anything, mock.Anything).
 		Return()
 	mockLogger.
-		On("LogError", mock.Anything, mock.Anything).
+		On("LogErrorContext", mock.Anything, mock.Anything, mock.Anything).
 		Return()
 
 	useCase := usecases.NewGetStatementUseCase(&mockLogger, &mockStatementRepository)
 
 	// Act
-	statement, err := useCase.Handle(accountId, transactionsType, 60, 2, 0)
+	statement, err := useCase.Handle(context.TODO(), accountId, transactionsType, 60, 2, 0)
 
 	// Assert
 	assert.Error(t, err)
@@ -60,15 +62,15 @@ func TestHandle_NotFoundTransactions(t *testing.T) {
 		On("GetStatementTransactions", accountId, mock.Anything, mock.Anything, entriesType, 2, 0).
 		Return(&[]domain.StatementTransaction{}, false, nil)
 
-	mockLogger := usecases_mocks.MockLogger{}
+	mockLogger := slogger.MockLogger{}
 	mockLogger.
-		On("LogInformation", mock.Anything, mock.Anything).
+		On("LogInformationContext", mock.Anything, mock.Anything, mock.Anything).
 		Return()
 
 	useCase := usecases.NewGetStatementUseCase(&mockLogger, &mockStatementRepository)
 
 	// Act
-	statement, err := useCase.Handle(accountId, transactionsType, 60, 2, 0)
+	statement, err := useCase.Handle(context.TODO(), accountId, transactionsType, 60, 2, 0)
 
 	// Assert
 	assert.Nil(t, err)
@@ -106,15 +108,15 @@ func TestHandle_FoundTransactions(t *testing.T) {
 		On("GetStatementTransactions", accountId, mock.Anything, mock.Anything, entriesType, 2, 0).
 		Return(transactions, false, nil)
 
-	mockLogger := usecases_mocks.MockLogger{}
+	mockLogger := slogger.MockLogger{}
 	mockLogger.
-		On("LogInformation", mock.Anything, mock.Anything).
+		On("LogInformationContext", mock.Anything, mock.Anything, mock.Anything).
 		Return()
 
 	useCase := usecases.NewGetStatementUseCase(&mockLogger, &mockStatementRepository)
 
 	// Act
-	statement, err := useCase.Handle(accountId, transactionsType, 60, 2, 0)
+	statement, err := useCase.Handle(context.TODO(), accountId, transactionsType, 60, 2, 0)
 
 	// Assert
 	assert.Nil(t, err)
@@ -159,15 +161,15 @@ func TestHandle_FoundTransactions_MustHaveNextPage(t *testing.T) {
 		On("GetStatementTransactions", accountId, mock.Anything, mock.Anything, entriesType, 2, 0).
 		Return(transactions, true, nil)
 
-	mockLogger := usecases_mocks.MockLogger{}
+	mockLogger := slogger.MockLogger{}
 	mockLogger.
-		On("LogInformation", mock.Anything, mock.Anything).
+		On("LogInformationContext", mock.Anything, mock.Anything, mock.Anything).
 		Return()
 
 	useCase := usecases.NewGetStatementUseCase(&mockLogger, &mockStatementRepository)
 
 	// Act
-	statement, err := useCase.Handle(accountId, transactionsType, 60, 2, 0)
+	statement, err := useCase.Handle(context.TODO(), accountId, transactionsType, 60, 2, 0)
 
 	// Assert
 	assert.Nil(t, err)
