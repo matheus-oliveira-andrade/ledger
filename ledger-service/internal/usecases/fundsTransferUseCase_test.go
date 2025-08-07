@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
 	usecases_mocks "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/usecases/mocks"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 	"strconv"
 	"testing"
 
@@ -14,14 +15,14 @@ import (
 )
 
 type testMocks struct {
-	mockLogger             *usecases_mocks.MockLogger
+	mockLogger             *slogger.MockLogger
 	mockTransactionService *usecases_mocks.MockTransactionService
 	mockAccountClient      *usecases_mocks.MockAccountClient
 	mockBalanceService     *usecases_mocks.MockBalanceService
 }
 
 func (tm *testMocks) setup() {
-	tm.mockLogger = &usecases_mocks.MockLogger{}
+	tm.mockLogger = &slogger.MockLogger{}
 	tm.mockLogger.
 		On("LogInformation", mock.Anything, mock.Anything).
 		Return()
