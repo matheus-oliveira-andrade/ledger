@@ -43,7 +43,7 @@ func NewFundsTransferUseCase(
 }
 
 func (u *FundsTransferUseCaseImp) Handle(ctx context.Context, accFrom, accTo, amount int64) error {
-	u.logger.LogInformation("processing transfer of funds", "accFrom", accFrom, "accTo", accTo, "amount", amount)
+	u.logger.LogInformationContext(ctx, "processing transfer of funds", "accFrom", accFrom, "accTo", accTo, "amount", amount)
 
 	err := u.validateFromAccount(ctx, accFrom, amount)
 	if err != nil {
@@ -60,7 +60,7 @@ func (u *FundsTransferUseCaseImp) Handle(ctx context.Context, accFrom, accTo, am
 		return err
 	}
 
-	u.logger.LogInformation("transfer completed")
+	u.logger.LogInformationContext(ctx, "transfer completed")
 	return nil
 }
 
@@ -69,11 +69,11 @@ func (u *FundsTransferUseCaseImp) accountExist(ctx context.Context, accId int64)
 		AccId: strconv.FormatInt(accId, 10),
 	}
 
-	u.logger.LogError("searching for account in account server", "accId", req.AccId)
+	u.logger.LogErrorContext(ctx, "searching for account in account server", "accId", req.AccId)
 
 	acc, err := u.accountClient.GetAccount(ctx, &req)
 
-	u.logger.LogError("searched for account in account server", "accId", req.AccId, "acc", acc, "err", err)
+	u.logger.LogErrorContext(ctx, "searched for account in account server", "accId", req.AccId, "acc", acc, "err", err)
 
 	return acc != nil && acc.Id == req.AccId, err
 }
@@ -85,23 +85,23 @@ func (u *FundsTransferUseCaseImp) getBalance(accId int64) (int64, error) {
 func (u *FundsTransferUseCaseImp) validateFromAccount(ctx context.Context, accFrom int64, amount int64) error {
 	ok, err := u.accountExist(ctx, accFrom)
 	if err != nil {
-		u.logger.LogError("error checking if account exist", "accFrom", accFrom, "error", err)
+		u.logger.LogErrorContext(ctx, "error checking if account exist", "accFrom", accFrom, "error", err)
 		return err
 	}
 
 	if !ok {
-		u.logger.LogError("acc from not found", "accFrom", accFrom)
+		u.logger.LogErrorContext(ctx, "acc from not found", "accFrom", accFrom)
 		return ErrFromAccountNotFound
 	}
 
 	balance, err := u.getBalance(accFrom)
 	if err != nil {
-		u.logger.LogError("error get acc balance", "accFrom", accFrom, "error", err)
+		u.logger.LogErrorContext(ctx, "error get acc balance", "accFrom", accFrom, "error", err)
 		return err
 	}
 
 	if balance < amount {
-		u.logger.LogError("insufficient balance", "accFrom", accFrom)
+		u.logger.LogErrorContext(ctx, "insufficient balance", "accFrom", accFrom)
 		return ErrInsufficientBalance
 	}
 
@@ -111,12 +111,12 @@ func (u *FundsTransferUseCaseImp) validateFromAccount(ctx context.Context, accFr
 func (u *FundsTransferUseCaseImp) validateToAccount(ctx context.Context, accTo int64) error {
 	ok, err := u.accountExist(ctx, accTo)
 	if err != nil {
-		u.logger.LogError("error checking if account exist", "accTo", accTo, "error", err)
+		u.logger.LogErrorContext(ctx, "error checking if account exist", "accTo", accTo, "error", err)
 		return err
 	}
 
 	if !ok {
-		u.logger.LogError("acc to not found", "accTo", accTo)
+		u.logger.LogErrorContext(ctx, "acc to not found", "accTo", accTo)
 		return ErrToAccountNotFound
 	}
 
@@ -131,7 +131,7 @@ func (u *FundsTransferUseCaseImp) createTransaction(ctx context.Context, accFrom
 
 	err := u.transactionService.Save(transaction)
 	if err != nil {
-		u.logger.LogError("error persisting transaction", "accFrom", accFrom, "accTo", accTo, "error", err)
+		u.logger.LogErrorContext(ctx, "error persisting transaction", "accFrom", accFrom, "accTo", accTo, "error", err)
 		return ErrCreatingTransaction
 	}
 

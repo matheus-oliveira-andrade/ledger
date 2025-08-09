@@ -24,10 +24,10 @@ type testMocks struct {
 func (tm *testMocks) setup() {
 	tm.mockLogger = &slogger.MockLogger{}
 	tm.mockLogger.
-		On("LogInformation", mock.Anything, mock.Anything).
+		On("LogInformationContext", mock.Anything, mock.Anything, mock.Anything).
 		Return()
 	tm.mockLogger.
-		On("LogError", mock.Anything, mock.Anything).
+		On("LogErrorContext", mock.Anything, mock.Anything, mock.Anything).
 		Return()
 
 	tm.mockTransactionService = &usecases_mocks.MockTransactionService{}
@@ -327,5 +327,5 @@ func TestFundsTransferUseCase_Handle_Success(t *testing.T) {
 	testMocks.mockAccountClient.AssertExpectations(t)
 	testMocks.mockBalanceService.AssertExpectations(t)
 	testMocks.mockTransactionService.AssertExpectations(t)
-	testMocks.mockLogger.AssertCalled(t, "LogInformation", "transfer completed", mock.Anything)
+	testMocks.mockLogger.AssertCalled(t, "LogInformationContext", mock.Anything, "transfer completed", mock.Anything)
 }
