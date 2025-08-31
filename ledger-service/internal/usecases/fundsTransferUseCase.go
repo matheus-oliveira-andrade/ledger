@@ -69,11 +69,11 @@ func (u *FundsTransferUseCaseImp) accountExist(ctx context.Context, accId int64)
 		AccId: strconv.FormatInt(accId, 10),
 	}
 
-	u.logger.LogErrorContext(ctx, "searching for account in account server", "accId", req.AccId)
+	u.logger.LogInformationContext(ctx, "searching for account in account server", "accId", req.AccId)
 
 	acc, err := u.accountClient.GetAccount(ctx, &req)
 
-	u.logger.LogErrorContext(ctx, "searched for account in account server", "accId", req.AccId, "acc", acc, "err", err)
+	u.logger.LogInformationContext(ctx, "searched for account in account server", "accId", req.AccId, "acc", acc, "err", err)
 
 	return acc != nil && acc.Id == req.AccId, err
 }
