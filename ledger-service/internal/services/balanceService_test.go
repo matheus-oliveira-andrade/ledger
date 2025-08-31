@@ -1,21 +1,24 @@
 package services_test
 
 import (
+	"context"
 	"errors"
+	"testing"
+
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/domain"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/services"
 	services_mocks "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/services/mocks"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestBalanceService_CalculateBalance_Success(t *testing.T) {
 	// Arrange
+	ctx := context.Background()
 	accId := int64(12323)
 
 	transactionLineMock := services_mocks.MockTransactionLineRepository{}
 	transactionLineMock.
-		On("GetTransactions", accId).
+		On("GetTransactions", ctx, accId).
 		Return(&[]domain.TransactionLine{
 			*domain.NewTransactionLine(accId, 100, domain.Credit),
 			*domain.NewTransactionLine(accId, 100, domain.Credit),
@@ -24,7 +27,7 @@ func TestBalanceService_CalculateBalance_Success(t *testing.T) {
 	service := services.NewBalanceService(&transactionLineMock)
 
 	// Act
-	result, err := service.CalculateBalance(accId)
+	result, err := service.CalculateBalance(ctx, accId)
 
 	// Assert
 	assert.NoError(t, err)
@@ -33,19 +36,20 @@ func TestBalanceService_CalculateBalance_Success(t *testing.T) {
 
 func TestBalanceService_CalculateBalance_Error(t *testing.T) {
 	// Arrange
+	ctx := context.Background()
 	accId := int64(12323)
 
 	expectedError := errors.New("random error")
 
 	transactionLineMock := services_mocks.MockTransactionLineRepository{}
 	transactionLineMock.
-		On("GetTransactions", accId).
+		On("GetTransactions", ctx, accId).
 		Return(&[]domain.TransactionLine{}, expectedError)
 
 	service := services.NewBalanceService(&transactionLineMock)
 
 	// Act
-	result, err := service.CalculateBalance(accId)
+	result, err := service.CalculateBalance(ctx, accId)
 
 	// Assert
 	assert.Error(t, expectedError, err)

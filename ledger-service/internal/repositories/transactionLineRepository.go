@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/domain"
@@ -8,7 +9,7 @@ import (
 
 type TransactionLineRepositoryInterface interface {
 	Create(line *domain.TransactionLine) (string, error)
-	GetTransactions(accId int64) (*[]domain.TransactionLine, error)
+	GetTransactions(ctx context.Context, accId int64) (*[]domain.TransactionLine, error)
 }
 
 type TransactionLineRepositoryImp struct {
@@ -35,8 +36,8 @@ func (r *TransactionLineRepositoryImp) Create(line *domain.TransactionLine) (str
 	return id, err
 }
 
-func (r *TransactionLineRepositoryImp) GetTransactions(accId int64) (*[]domain.TransactionLine, error) {
-	rows, err := r.db.Query(`
+func (r *TransactionLineRepositoryImp) GetTransactions(ctx context.Context, accId int64) (*[]domain.TransactionLine, error) {
+	rows, err := r.db.QueryContext(ctx, `
 		SELECT Id, AccountId, TransactionId, Amount, EntryType, CreatedAt
 		FROM TransactionLine
 		WHERE AccountId = $1

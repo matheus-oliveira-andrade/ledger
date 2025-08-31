@@ -1,12 +1,14 @@
 package usecases
 
 import (
+	"context"
+
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/services"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 )
 
 type GetBalanceUseCaseInterface interface {
-	Handle(accId int64) (int64, error)
+	Handle(ctx context.Context, accId int64) (int64, error)
 }
 
 type GetBalanceUseCaseImp struct {
@@ -23,6 +25,6 @@ func NewGetBalanceUseCase(
 	}
 }
 
-func (us *GetBalanceUseCaseImp) Handle(accId int64) (int64, error) {
-	return us.balanceService.CalculateBalance(accId)
+func (us *GetBalanceUseCaseImp) Handle(ctx context.Context, accId int64) (int64, error) {
+	return us.balanceService.CalculateBalance(ctx, accId)
 }

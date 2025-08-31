@@ -69,17 +69,17 @@ func (u *FundsTransferUseCaseImp) accountExist(ctx context.Context, accId int64)
 		AccId: strconv.FormatInt(accId, 10),
 	}
 
-	u.logger.LogErrorContext(ctx, "searching for account in account server", "accId", req.AccId)
+	u.logger.LogInformationContext(ctx, "searching for account in account server", "accId", req.AccId)
 
 	acc, err := u.accountClient.GetAccount(ctx, &req)
 
-	u.logger.LogErrorContext(ctx, "searched for account in account server", "accId", req.AccId, "acc", acc, "err", err)
+	u.logger.LogInformationContext(ctx, "searched for account in account server", "accId", req.AccId, "acc", acc, "err", err)
 
 	return acc != nil && acc.Id == req.AccId, err
 }
 
-func (u *FundsTransferUseCaseImp) getBalance(accId int64) (int64, error) {
-	return u.balanceService.CalculateBalance(accId)
+func (u *FundsTransferUseCaseImp) getBalance(ctx context.Context, accId int64) (int64, error) {
+	return u.balanceService.CalculateBalance(ctx, accId)
 }
 
 func (u *FundsTransferUseCaseImp) validateFromAccount(ctx context.Context, accFrom int64, amount int64) error {
@@ -94,7 +94,7 @@ func (u *FundsTransferUseCaseImp) validateFromAccount(ctx context.Context, accFr
 		return ErrFromAccountNotFound
 	}
 
-	balance, err := u.getBalance(accFrom)
+	balance, err := u.getBalance(ctx, accFrom)
 	if err != nil {
 		u.logger.LogErrorContext(ctx, "error get acc balance", "accFrom", accFrom, "error", err)
 		return err

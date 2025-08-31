@@ -3,9 +3,9 @@ package http
 import (
 	"fmt"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
-	middlewares2 "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http/middlewares"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http/middlewares"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http/routes"
-	controllersV12 "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http/routes/v1"
+	controllersV1 "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http/routes/v1"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 	"net/http"
 
@@ -34,8 +34,8 @@ func NewServerWrapper(serviceName string, logger slogger.LoggerInterface, port i
 }
 
 func (hs *ServerWrapper) Setup() {
-	hs.Router.Use(middlewares2.UseCorrelationIdMiddleware())
-	hs.Router.Use(middlewares2.UseLogRequestsMiddleware(hs.Logger))
+	hs.Router.Use(middlewares.UseCorrelationIdMiddleware())
+	hs.Router.Use(middlewares.UseLogRequestsMiddleware(hs.Logger))
 	hs.Router.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
@@ -58,18 +58,18 @@ func (hs *ServerWrapper) Setup() {
 
 			fundsTransferUseCase := usecases.NewFundsTransferUseCase(hs.Logger, transactionService, accountClient, balanceService)
 
-			controllersV12.NewFundsTransferController(hs.Logger, fundsTransferUseCase).
+			controllersV1.NewFundsTransferController(hs.Logger, fundsTransferUseCase).
 				RegisterRoutes(v1Router)
 
 			getBalanceUseCase := usecases.NewGetBalanceUseCase(hs.Logger, balanceService)
 
-			controllersV12.NewBalanceController(hs.Logger, getBalanceUseCase).
+			controllersV1.NewBalanceController(hs.Logger, getBalanceUseCase).
 				RegisterRoutes(v1Router)
 
 			statementRepository := repositories.NewStatementRepository(dbConnection)
 			getStatementUseCase := usecases.NewGetStatementUseCase(hs.Logger, statementRepository)
 
-			controllersV12.NewStatementController(hs.Logger, getStatementUseCase).
+			controllersV1.NewStatementController(hs.Logger, getStatementUseCase).
 				RegisterRoutes(v1Router)
 		})
 	})

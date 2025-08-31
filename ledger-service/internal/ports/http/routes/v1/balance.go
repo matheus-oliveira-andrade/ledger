@@ -43,7 +43,7 @@ func (c *BalanceController) getBalanceHandler(w http.ResponseWriter, r *http.Req
 
 	accId, _ := strconv.ParseInt(accIdStr, 10, 64)
 
-	balance, err := c.getBalanceUseCase.Handle(accId)
+	balance, err := c.getBalanceUseCase.Handle(r.Context(), accId)
 	if err != nil {
 		utils.RenderErrorJsonResponse(w, err)
 		return
