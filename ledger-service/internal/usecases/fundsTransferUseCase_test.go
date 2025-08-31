@@ -114,7 +114,7 @@ func TestFundsTransferUseCase_Handle_ErrorGettingFromAccountBalance(t *testing.T
 		Return(&accountgrpc.GetAccountResponse{Id: "1"}, nil)
 
 	testMocks.mockBalanceService.
-		On("CalculateBalance", accFrom).
+		On("CalculateBalance", ctx, accFrom).
 		Return(int64(0), errors.New("balance error"))
 
 	useCase := usecases.NewFundsTransferUseCase(
@@ -148,7 +148,7 @@ func TestFundsTransferUseCase_Handle_FromAccountInsufficientBalance(t *testing.T
 		Return(&accountgrpc.GetAccountResponse{Id: "1"}, nil)
 
 	testMocks.mockBalanceService.
-		On("CalculateBalance", accFrom).
+		On("CalculateBalance", ctx, accFrom).
 		Return(int64(50), nil)
 
 	useCase := usecases.NewFundsTransferUseCase(
@@ -185,7 +185,7 @@ func TestFundsTransferUseCase_Handle_ErrorCheckingToAccountExist(t *testing.T) {
 		Return((*accountgrpc.GetAccountResponse)(nil), errors.New("connection error")).Once()
 
 	testMocks.mockBalanceService.
-		On("CalculateBalance", accFrom).
+		On("CalculateBalance", ctx, accFrom).
 		Return(int64(200), nil)
 
 	useCase := usecases.NewFundsTransferUseCase(
@@ -222,7 +222,7 @@ func TestFundsTransferUseCase_Handle_ToAccountNotExist(t *testing.T) {
 		Return((*accountgrpc.GetAccountResponse)(nil), nil).Once()
 
 	testMocks.mockBalanceService.
-		On("CalculateBalance", accFrom).
+		On("CalculateBalance", ctx, accFrom).
 		Return(int64(200), nil)
 
 	useCase := usecases.NewFundsTransferUseCase(
@@ -263,7 +263,7 @@ func TestFundsTransferUseCase_Handle_ErrorSaveTransaction(t *testing.T) {
 		Return(&accountgrpc.GetAccountResponse{Id: "2"}, nil).Once()
 
 	testMocks.mockBalanceService.
-		On("CalculateBalance", accFrom).
+		On("CalculateBalance", ctx, accFrom).
 		Return(int64(200), nil)
 
 	useCase := usecases.NewFundsTransferUseCase(
@@ -309,7 +309,7 @@ func TestFundsTransferUseCase_Handle_Success(t *testing.T) {
 		Return(&accountgrpc.GetAccountResponse{Id: "2"}, nil).Once()
 
 	testMocks.mockBalanceService.
-		On("CalculateBalance", accFrom).
+		On("CalculateBalance", ctx, accFrom).
 		Return(int64(200), nil)
 
 	useCase := usecases.NewFundsTransferUseCase(

@@ -1,12 +1,14 @@
 package services
 
 import (
+	"context"
+
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/domain"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/repositories"
 )
 
 type BalanceServiceInterface interface {
-	CalculateBalance(accId int64) (int64, error)
+	CalculateBalance(ctx context.Context, accId int64) (int64, error)
 }
 
 type BalanceServiceImp struct {
@@ -19,8 +21,8 @@ func NewBalanceService(transactionLineRepository repositories.TransactionLineRep
 	}
 }
 
-func (s *BalanceServiceImp) CalculateBalance(accId int64) (int64, error) {
-	lines, err := s.transactionLineRepository.GetTransactions(accId)
+func (s *BalanceServiceImp) CalculateBalance(ctx context.Context, accId int64) (int64, error) {
+	lines, err := s.transactionLineRepository.GetTransactions(ctx, accId)
 	if err != nil {
 		return 0, err
 	}
