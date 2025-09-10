@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"testing"
 
-	accountgrpc "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
 	adapters_mocks "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/mocks"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/domain"
 	usecases_mocks "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/usecases/mocks"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 
@@ -55,7 +55,7 @@ func TestFundsTransferUseCase_Handle_ErrorCheckingFromAccountExist(t *testing.T)
 
 	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return((*accountgrpc.GetAccountResponse)(nil), errors.New("connection error"))
+		Return((*domain.Account)(nil), errors.New("connection error"))
 
 	useCase := usecases.NewFundsTransferUseCase(
 		testMocks.mockLogger,
@@ -84,7 +84,7 @@ func TestFundsTransferUseCase_Handle_FromAccountNotExist(t *testing.T) {
 
 	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return((*accountgrpc.GetAccountResponse)(nil), nil)
+		Return((*domain.Account)(nil), nil)
 
 	useCase := usecases.NewFundsTransferUseCase(
 		testMocks.mockLogger,
@@ -113,7 +113,7 @@ func TestFundsTransferUseCase_Handle_ErrorGettingFromAccountBalance(t *testing.T
 
 	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "1"}, nil)
+		Return(&domain.Account{Id: "1"}, nil)
 
 	testMocks.mockBalanceService.
 		On("CalculateBalance", ctx, accFrom).
@@ -147,7 +147,7 @@ func TestFundsTransferUseCase_Handle_FromAccountInsufficientBalance(t *testing.T
 
 	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "1"}, nil)
+		Return(&domain.Account{Id: "1"}, nil)
 
 	testMocks.mockBalanceService.
 		On("CalculateBalance", ctx, accFrom).
@@ -181,10 +181,10 @@ func TestFundsTransferUseCase_Handle_ErrorCheckingToAccountExist(t *testing.T) {
 
 	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "1"}, nil).Once()
+		Return(&domain.Account{Id: "1"}, nil).Once()
 	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return((*accountgrpc.GetAccountResponse)(nil), errors.New("connection error")).Once()
+		Return((*domain.Account)(nil), errors.New("connection error")).Once()
 
 	testMocks.mockBalanceService.
 		On("CalculateBalance", ctx, accFrom).
@@ -218,10 +218,10 @@ func TestFundsTransferUseCase_Handle_ToAccountNotExist(t *testing.T) {
 
 	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "1"}, nil).Once()
+		Return(&domain.Account{Id: "1"}, nil).Once()
 	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return((*accountgrpc.GetAccountResponse)(nil), nil).Once()
+		Return((*domain.Account)(nil), nil).Once()
 
 	testMocks.mockBalanceService.
 		On("CalculateBalance", ctx, accFrom).
@@ -259,10 +259,10 @@ func TestFundsTransferUseCase_Handle_ErrorSaveTransaction(t *testing.T) {
 
 	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "1"}, nil).Once()
+		Return(&domain.Account{Id: "1"}, nil).Once()
 	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "2"}, nil).Once()
+		Return(&domain.Account{Id: "2"}, nil).Once()
 
 	testMocks.mockBalanceService.
 		On("CalculateBalance", ctx, accFrom).
@@ -303,12 +303,12 @@ func TestFundsTransferUseCase_Handle_Success(t *testing.T) {
 		On("GetAccount", ctx, mock.MatchedBy(func(accId string) bool {
 			return accId == strconv.FormatInt(accFrom, 10)
 		}), mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "1"}, nil).Once()
+		Return(&domain.Account{Id: "1"}, nil).Once()
 	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.MatchedBy(func(accId string) bool {
 			return accId == strconv.FormatInt(accTo, 10)
 		}), mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "2"}, nil).Once()
+		Return(&domain.Account{Id: "2"}, nil).Once()
 
 	testMocks.mockBalanceService.
 		On("CalculateBalance", ctx, accFrom).
