@@ -3,9 +3,10 @@ package usecases
 import (
 	"context"
 	"errors"
-	accountgrpc "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 	"strconv"
+
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/domain"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/services"
@@ -25,19 +26,19 @@ var (
 type FundsTransferUseCaseImp struct {
 	logger             slogger.LoggerInterface
 	transactionService services.TransactionServiceInterface
-	accountClient      accountgrpc.AccountClient
+	accountAdapter     adapters.AccountAdapterInterface
 	balanceService     services.BalanceServiceInterface
 }
 
 func NewFundsTransferUseCase(
 	logger slogger.LoggerInterface,
 	transactionService services.TransactionServiceInterface,
-	accountClient accountgrpc.AccountClient,
+	accountAdapter adapters.AccountAdapterInterface,
 	balanceService services.BalanceServiceInterface) *FundsTransferUseCaseImp {
 	return &FundsTransferUseCaseImp{
 		logger:             logger,
 		transactionService: transactionService,
-		accountClient:      accountClient,
+		accountAdapter:     accountAdapter,
 		balanceService:     balanceService,
 	}
 }
@@ -65,17 +66,19 @@ func (u *FundsTransferUseCaseImp) Handle(ctx context.Context, accFrom, accTo, am
 }
 
 func (u *FundsTransferUseCaseImp) accountExist(ctx context.Context, accId int64) (bool, error) {
-	req := accountgrpc.GetAccountRequest{
-		AccId: strconv.FormatInt(accId, 10),
+
+	u.logger.LogInformationContext(ctx, "searching for account in account server", "accId", accId)
+
+	acc, err := u.accountAdapter.GetAccount(ctx, strconv.FormatInt(accId, 10))
+	if err != nil {
+		return false, err
 	}
 
-	u.logger.LogInformationContext(ctx, "searching for account in account server", "accId", req.AccId)
+	if acc == nil {
+		return false, nil
+	}
 
-	acc, err := u.accountClient.GetAccount(ctx, &req)
-
-	u.logger.LogInformationContext(ctx, "searched for account in account server", "accId", req.AccId, "acc", acc, "err", err)
-
-	return acc != nil && acc.Id == req.AccId, err
+	return true, nil
 }
 
 func (u *FundsTransferUseCaseImp) getBalance(ctx context.Context, accId int64) (int64, error) {
