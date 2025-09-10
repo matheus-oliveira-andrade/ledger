@@ -3,11 +3,13 @@ package usecases_test
 import (
 	"context"
 	"errors"
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
-	usecases_mocks "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/usecases/mocks"
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 	"strconv"
 	"testing"
+
+	adapters_mocks "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/mocks"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/domain"
+	usecases_mocks "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/usecases/mocks"
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
 
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/usecases"
 	"github.com/stretchr/testify/assert"
@@ -17,7 +19,7 @@ import (
 type testMocks struct {
 	mockLogger             *slogger.MockLogger
 	mockTransactionService *usecases_mocks.MockTransactionService
-	mockAccountClient      *usecases_mocks.MockAccountClient
+	mockAccountMock        *adapters_mocks.MockAccountAdapter
 	mockBalanceService     *usecases_mocks.MockBalanceService
 }
 
@@ -31,7 +33,7 @@ func (tm *testMocks) setup() {
 		Return()
 
 	tm.mockTransactionService = &usecases_mocks.MockTransactionService{}
-	tm.mockAccountClient = &usecases_mocks.MockAccountClient{}
+	tm.mockAccountMock = &adapters_mocks.MockAccountAdapter{}
 	tm.mockBalanceService = &usecases_mocks.MockBalanceService{}
 }
 
@@ -51,14 +53,14 @@ func TestFundsTransferUseCase_Handle_ErrorCheckingFromAccountExist(t *testing.T)
 
 	testMocks := newTestMocks()
 
-	testMocks.mockAccountClient.
+	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return((*accountgrpc.GetAccountResponse)(nil), errors.New("connection error"))
+		Return((*domain.Account)(nil), errors.New("connection error"))
 
 	useCase := usecases.NewFundsTransferUseCase(
 		testMocks.mockLogger,
 		testMocks.mockTransactionService,
-		testMocks.mockAccountClient,
+		testMocks.mockAccountMock,
 		testMocks.mockBalanceService,
 	)
 
@@ -68,7 +70,7 @@ func TestFundsTransferUseCase_Handle_ErrorCheckingFromAccountExist(t *testing.T)
 	// Assert
 	assert.Error(t, err)
 	assert.Equal(t, "connection error", err.Error())
-	testMocks.mockAccountClient.AssertExpectations(t)
+	testMocks.mockAccountMock.AssertExpectations(t)
 }
 
 func TestFundsTransferUseCase_Handle_FromAccountNotExist(t *testing.T) {
@@ -80,14 +82,14 @@ func TestFundsTransferUseCase_Handle_FromAccountNotExist(t *testing.T) {
 
 	testMocks := newTestMocks()
 
-	testMocks.mockAccountClient.
+	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return((*accountgrpc.GetAccountResponse)(nil), nil)
+		Return((*domain.Account)(nil), nil)
 
 	useCase := usecases.NewFundsTransferUseCase(
 		testMocks.mockLogger,
 		testMocks.mockTransactionService,
-		testMocks.mockAccountClient,
+		testMocks.mockAccountMock,
 		testMocks.mockBalanceService,
 	)
 
@@ -97,7 +99,7 @@ func TestFundsTransferUseCase_Handle_FromAccountNotExist(t *testing.T) {
 	// Assert
 	assert.Error(t, err)
 	assert.Equal(t, "acc from not found", err.Error())
-	testMocks.mockAccountClient.AssertExpectations(t)
+	testMocks.mockAccountMock.AssertExpectations(t)
 }
 
 func TestFundsTransferUseCase_Handle_ErrorGettingFromAccountBalance(t *testing.T) {
@@ -109,9 +111,9 @@ func TestFundsTransferUseCase_Handle_ErrorGettingFromAccountBalance(t *testing.T
 
 	testMocks := newTestMocks()
 
-	testMocks.mockAccountClient.
+	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "1"}, nil)
+		Return(&domain.Account{Id: "1"}, nil)
 
 	testMocks.mockBalanceService.
 		On("CalculateBalance", ctx, accFrom).
@@ -120,7 +122,7 @@ func TestFundsTransferUseCase_Handle_ErrorGettingFromAccountBalance(t *testing.T
 	useCase := usecases.NewFundsTransferUseCase(
 		testMocks.mockLogger,
 		testMocks.mockTransactionService,
-		testMocks.mockAccountClient,
+		testMocks.mockAccountMock,
 		testMocks.mockBalanceService,
 	)
 
@@ -130,7 +132,7 @@ func TestFundsTransferUseCase_Handle_ErrorGettingFromAccountBalance(t *testing.T
 	// Assert
 	assert.Error(t, err)
 	assert.Equal(t, "balance error", err.Error())
-	testMocks.mockAccountClient.AssertExpectations(t)
+	testMocks.mockAccountMock.AssertExpectations(t)
 	testMocks.mockBalanceService.AssertExpectations(t)
 }
 
@@ -143,9 +145,9 @@ func TestFundsTransferUseCase_Handle_FromAccountInsufficientBalance(t *testing.T
 
 	testMocks := newTestMocks()
 
-	testMocks.mockAccountClient.
+	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "1"}, nil)
+		Return(&domain.Account{Id: "1"}, nil)
 
 	testMocks.mockBalanceService.
 		On("CalculateBalance", ctx, accFrom).
@@ -154,7 +156,7 @@ func TestFundsTransferUseCase_Handle_FromAccountInsufficientBalance(t *testing.T
 	useCase := usecases.NewFundsTransferUseCase(
 		testMocks.mockLogger,
 		testMocks.mockTransactionService,
-		testMocks.mockAccountClient,
+		testMocks.mockAccountMock,
 		testMocks.mockBalanceService,
 	)
 
@@ -164,7 +166,7 @@ func TestFundsTransferUseCase_Handle_FromAccountInsufficientBalance(t *testing.T
 	// Assert
 	assert.Error(t, err)
 	assert.Equal(t, "insufficient balance", err.Error())
-	testMocks.mockAccountClient.AssertExpectations(t)
+	testMocks.mockAccountMock.AssertExpectations(t)
 	testMocks.mockBalanceService.AssertExpectations(t)
 }
 
@@ -177,12 +179,12 @@ func TestFundsTransferUseCase_Handle_ErrorCheckingToAccountExist(t *testing.T) {
 
 	testMocks := newTestMocks()
 
-	testMocks.mockAccountClient.
+	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "1"}, nil).Once()
-	testMocks.mockAccountClient.
+		Return(&domain.Account{Id: "1"}, nil).Once()
+	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return((*accountgrpc.GetAccountResponse)(nil), errors.New("connection error")).Once()
+		Return((*domain.Account)(nil), errors.New("connection error")).Once()
 
 	testMocks.mockBalanceService.
 		On("CalculateBalance", ctx, accFrom).
@@ -191,7 +193,7 @@ func TestFundsTransferUseCase_Handle_ErrorCheckingToAccountExist(t *testing.T) {
 	useCase := usecases.NewFundsTransferUseCase(
 		testMocks.mockLogger,
 		testMocks.mockTransactionService,
-		testMocks.mockAccountClient,
+		testMocks.mockAccountMock,
 		testMocks.mockBalanceService,
 	)
 
@@ -201,7 +203,7 @@ func TestFundsTransferUseCase_Handle_ErrorCheckingToAccountExist(t *testing.T) {
 	// Assert
 	assert.Error(t, err)
 	assert.Equal(t, "connection error", err.Error())
-	testMocks.mockAccountClient.AssertExpectations(t)
+	testMocks.mockAccountMock.AssertExpectations(t)
 	testMocks.mockBalanceService.AssertExpectations(t)
 }
 
@@ -214,12 +216,12 @@ func TestFundsTransferUseCase_Handle_ToAccountNotExist(t *testing.T) {
 
 	testMocks := newTestMocks()
 
-	testMocks.mockAccountClient.
+	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "1"}, nil).Once()
-	testMocks.mockAccountClient.
+		Return(&domain.Account{Id: "1"}, nil).Once()
+	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return((*accountgrpc.GetAccountResponse)(nil), nil).Once()
+		Return((*domain.Account)(nil), nil).Once()
 
 	testMocks.mockBalanceService.
 		On("CalculateBalance", ctx, accFrom).
@@ -228,7 +230,7 @@ func TestFundsTransferUseCase_Handle_ToAccountNotExist(t *testing.T) {
 	useCase := usecases.NewFundsTransferUseCase(
 		testMocks.mockLogger,
 		testMocks.mockTransactionService,
-		testMocks.mockAccountClient,
+		testMocks.mockAccountMock,
 		testMocks.mockBalanceService,
 	)
 
@@ -238,7 +240,7 @@ func TestFundsTransferUseCase_Handle_ToAccountNotExist(t *testing.T) {
 	// Assert
 	assert.Error(t, err)
 	assert.Equal(t, "acc to not found", err.Error())
-	testMocks.mockAccountClient.AssertExpectations(t)
+	testMocks.mockAccountMock.AssertExpectations(t)
 	testMocks.mockBalanceService.AssertExpectations(t)
 }
 
@@ -255,12 +257,12 @@ func TestFundsTransferUseCase_Handle_ErrorSaveTransaction(t *testing.T) {
 		On("Save", mock.Anything).
 		Return(errors.New("save error"))
 
-	testMocks.mockAccountClient.
+	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "1"}, nil).Once()
-	testMocks.mockAccountClient.
+		Return(&domain.Account{Id: "1"}, nil).Once()
+	testMocks.mockAccountMock.
 		On("GetAccount", ctx, mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "2"}, nil).Once()
+		Return(&domain.Account{Id: "2"}, nil).Once()
 
 	testMocks.mockBalanceService.
 		On("CalculateBalance", ctx, accFrom).
@@ -269,7 +271,7 @@ func TestFundsTransferUseCase_Handle_ErrorSaveTransaction(t *testing.T) {
 	useCase := usecases.NewFundsTransferUseCase(
 		testMocks.mockLogger,
 		testMocks.mockTransactionService,
-		testMocks.mockAccountClient,
+		testMocks.mockAccountMock,
 		testMocks.mockBalanceService,
 	)
 
@@ -279,7 +281,7 @@ func TestFundsTransferUseCase_Handle_ErrorSaveTransaction(t *testing.T) {
 	// Assert
 	assert.Error(t, err)
 	assert.Equal(t, "error persisting transaction", err.Error())
-	testMocks.mockAccountClient.AssertExpectations(t)
+	testMocks.mockAccountMock.AssertExpectations(t)
 	testMocks.mockBalanceService.AssertExpectations(t)
 	testMocks.mockTransactionService.AssertExpectations(t)
 }
@@ -297,16 +299,16 @@ func TestFundsTransferUseCase_Handle_Success(t *testing.T) {
 		On("Save", mock.Anything).
 		Return(nil)
 
-	testMocks.mockAccountClient.
-		On("GetAccount", ctx, mock.MatchedBy(func(req *accountgrpc.GetAccountRequest) bool {
-			return req.AccId == strconv.FormatInt(accFrom, 10)
+	testMocks.mockAccountMock.
+		On("GetAccount", ctx, mock.MatchedBy(func(accId string) bool {
+			return accId == strconv.FormatInt(accFrom, 10)
 		}), mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "1"}, nil).Once()
-	testMocks.mockAccountClient.
-		On("GetAccount", ctx, mock.MatchedBy(func(req *accountgrpc.GetAccountRequest) bool {
-			return req.AccId == strconv.FormatInt(accTo, 10)
+		Return(&domain.Account{Id: "1"}, nil).Once()
+	testMocks.mockAccountMock.
+		On("GetAccount", ctx, mock.MatchedBy(func(accId string) bool {
+			return accId == strconv.FormatInt(accTo, 10)
 		}), mock.Anything).
-		Return(&accountgrpc.GetAccountResponse{Id: "2"}, nil).Once()
+		Return(&domain.Account{Id: "2"}, nil).Once()
 
 	testMocks.mockBalanceService.
 		On("CalculateBalance", ctx, accFrom).
@@ -315,7 +317,7 @@ func TestFundsTransferUseCase_Handle_Success(t *testing.T) {
 	useCase := usecases.NewFundsTransferUseCase(
 		testMocks.mockLogger,
 		testMocks.mockTransactionService,
-		testMocks.mockAccountClient,
+		testMocks.mockAccountMock,
 		testMocks.mockBalanceService,
 	)
 
@@ -324,7 +326,7 @@ func TestFundsTransferUseCase_Handle_Success(t *testing.T) {
 
 	// Assert
 	assert.NoError(t, err)
-	testMocks.mockAccountClient.AssertExpectations(t)
+	testMocks.mockAccountMock.AssertExpectations(t)
 	testMocks.mockBalanceService.AssertExpectations(t)
 	testMocks.mockTransactionService.AssertExpectations(t)
 	testMocks.mockLogger.AssertCalled(t, "LogInformationContext", mock.Anything, "transfer completed", mock.Anything)

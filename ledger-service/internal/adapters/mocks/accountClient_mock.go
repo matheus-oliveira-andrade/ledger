@@ -1,8 +1,9 @@
-package usecases_mocks
+package adapters_mocks
 
 import (
 	"context"
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
+
+	accountgrpc "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/grpc"
 )

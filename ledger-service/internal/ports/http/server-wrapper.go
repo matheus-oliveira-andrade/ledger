@@ -2,12 +2,14 @@ package http
 
 import (
 	"fmt"
-	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
+	"net/http"
+
+	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters"
+	accountgrpc "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http/middlewares"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http/routes"
 	controllersV1 "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/ports/http/routes/v1"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
-	"net/http"
 
 	"github.com/go-chi/chi"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/repositories"
@@ -55,8 +57,9 @@ func (hs *ServerWrapper) Setup() {
 			balanceService := services.NewBalanceService(transactionLineRepository)
 
 			accountClient := accountgrpc.NewAccountGRPCClient()
+			accountAdapter := adapters.NewAccountAdapter(accountClient)
 
-			fundsTransferUseCase := usecases.NewFundsTransferUseCase(hs.Logger, transactionService, accountClient, balanceService)
+			fundsTransferUseCase := usecases.NewFundsTransferUseCase(hs.Logger, transactionService, accountAdapter, balanceService)
 
 			controllersV1.NewFundsTransferController(hs.Logger, fundsTransferUseCase).
 				RegisterRoutes(v1Router)
