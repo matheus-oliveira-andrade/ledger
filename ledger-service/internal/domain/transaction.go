@@ -1,18 +1,30 @@
 package domain
 
-import "time"
+import (
+	"time"
+)
 
 type Transaction struct {
 	Id          int64
 	Description string
 	CreatedAt   time.Time
-	Lines       []*TransactionLine
+	lines       []*TransactionLine
 }
 
-func NewTransaction(description string, lines []*TransactionLine) *Transaction {
+func NewTransaction(amount int64, description string, accFrom, accTo *Account) *Transaction {
+	lineFrom := NewTransactionLine(accFrom.Id, amount, Debit)
+	lineTo := NewTransactionLine(accTo.Id, amount, Credit)
+
 	return &Transaction{
 		Description: description,
 		CreatedAt:   time.Now(),
-		Lines:       lines,
+		lines: []*TransactionLine{
+			lineFrom,
+			lineTo,
+		},
 	}
+}
+
+func (t *Transaction) GetLines() []*TransactionLine {
+	return t.lines
 }

@@ -11,7 +11,7 @@ type MockAccountAdapter struct {
 	mock.Mock
 }
 
-func (m *MockAccountAdapter) GetAccount(ctx context.Context, accId string) (*domain.Account, error) {
+func (m *MockAccountAdapter) GetAccount(ctx context.Context, accId int64) (*domain.Account, error) {
 	args := m.Called(ctx, accId)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)

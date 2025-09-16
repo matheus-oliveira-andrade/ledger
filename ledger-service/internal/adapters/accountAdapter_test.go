@@ -3,6 +3,7 @@ package adapters_test
 import (
 	"context"
 	"errors"
+	"strconv"
 	"testing"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
@@ -15,7 +16,7 @@ import (
 func TestAccountAdapter_getAccount_Success(t *testing.T) {
 	// Arrange
 	ctx := context.Background()
-	accId := "test-account-id"
+	accId := "11"
 
 	expectedResponse := &accountgrpc.GetAccountResponse{
 		Id:        accId,
@@ -29,13 +30,18 @@ func TestAccountAdapter_getAccount_Success(t *testing.T) {
 
 	adapter := adapters.NewAccountAdapter(mockClient)
 
+	accIdInt, _ := strconv.ParseInt(accId, 10, 64)
+
 	// Act
-	result, err := adapter.GetAccount(ctx, accId)
+	result, err := adapter.GetAccount(ctx, accIdInt)
 
 	// Assert
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
-	assert.Equal(t, accId, result.Id)
+
+	expectedAccId, _ := strconv.ParseInt(accId, 10, 64)
+	assert.Equal(t, expectedAccId, result.Id)
+
 	assert.Equal(t, "12345678901", result.Document)
 	assert.Equal(t, "Test Account", result.Name)
 	assert.Equal(t, expectedResponse.CreatedAt, result.CreatedAt)
@@ -45,7 +51,7 @@ func TestAccountAdapter_getAccount_Success(t *testing.T) {
 func TestAccountAdapter_getAccount_ClientError(t *testing.T) {
 	// Arrange
 	ctx := context.Background()
-	accId := "test-account-id"
+	accId := "11"
 	expectedError := errors.New("grpc client error")
 
 	mockClient := &adapters_mocks.MockAccountClient{}
@@ -53,8 +59,10 @@ func TestAccountAdapter_getAccount_ClientError(t *testing.T) {
 
 	adapter := adapters.NewAccountAdapter(mockClient)
 
+	accIdInt, _ := strconv.ParseInt(accId, 10, 64)
+
 	// Act
-	result, err := adapter.GetAccount(ctx, accId)
+	result, err := adapter.GetAccount(ctx, accIdInt)
 
 	// Assert
 	assert.Error(t, err)
@@ -66,15 +74,17 @@ func TestAccountAdapter_getAccount_ClientError(t *testing.T) {
 func TestAccountAdapter_getAccount_NilResponse(t *testing.T) {
 	// Arrange
 	ctx := context.Background()
-	accId := "test-account-id"
+	accId := "11"
 
 	mockClient := &adapters_mocks.MockAccountClient{}
 	mockClient.On("GetAccount", ctx, &accountgrpc.GetAccountRequest{AccId: accId}).Return((*accountgrpc.GetAccountResponse)(nil), nil)
 
 	adapter := adapters.NewAccountAdapter(mockClient)
 
+	accIdInt, _ := strconv.ParseInt(accId, 10, 64)
+
 	// Act
-	result, err := adapter.GetAccount(ctx, accId)
+	result, err := adapter.GetAccount(ctx, accIdInt)
 
 	// Assert
 	assert.NoError(t, err)
@@ -85,7 +95,7 @@ func TestAccountAdapter_getAccount_NilResponse(t *testing.T) {
 func TestAccountAdapter_getAccount_InvalidAccountId(t *testing.T) {
 	// Arrange
 	ctx := context.Background()
-	accId := "test-account-id"
+	accId := "11"
 
 	response := &accountgrpc.GetAccountResponse{
 		Id:        "different-account-id",
@@ -99,8 +109,10 @@ func TestAccountAdapter_getAccount_InvalidAccountId(t *testing.T) {
 
 	adapter := adapters.NewAccountAdapter(mockClient)
 
+	accIdInt, _ := strconv.ParseInt(accId, 10, 64)
+
 	// Act
-	result, err := adapter.GetAccount(ctx, accId)
+	result, err := adapter.GetAccount(ctx, accIdInt)
 
 	// Assert
 	assert.NoError(t, err)

@@ -2,13 +2,14 @@ package adapters
 
 import (
 	"context"
+	"strconv"
 
 	accountgrpc "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters/grpc"
 	domain "github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/domain"
 )
 
 type AccountAdapterInterface interface {
-	GetAccount(ctx context.Context, accId string) (*domain.Account, error)
+	GetAccount(ctx context.Context, accId int64) (*domain.Account, error)
 }
 
 type AccountAdapterImp struct {
@@ -21,9 +22,9 @@ func NewAccountAdapter(accountClient accountgrpc.AccountClient) *AccountAdapterI
 	}
 }
 
-func (adapter *AccountAdapterImp) GetAccount(ctx context.Context, accId string) (*domain.Account, error) {
+func (adapter *AccountAdapterImp) GetAccount(ctx context.Context, accId int64) (*domain.Account, error) {
 	req := accountgrpc.GetAccountRequest{
-		AccId: accId,
+		AccId: strconv.FormatInt(accId, 10),
 	}
 
 	acc, err := adapter.accountClient.GetAccount(ctx, &req)
@@ -35,5 +36,5 @@ func (adapter *AccountAdapterImp) GetAccount(ctx context.Context, accId string) 
 		return nil, nil
 	}
 
-	return domain.NewAccount(acc.Id, acc.Document, acc.Name, acc.CreatedAt), nil
+	return domain.NewAccount(accId, acc.Document, acc.Name, acc.CreatedAt), nil
 }

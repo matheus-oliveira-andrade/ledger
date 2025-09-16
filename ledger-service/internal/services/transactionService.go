@@ -35,7 +35,7 @@ func (ts *TransactionService) Save(transaction *domain.Transaction) error {
 		return err
 	}
 
-	for _, line := range transaction.Lines {
+	for _, line := range transaction.GetLines() {
 		line.TransactionId = transactionId
 
 		_, err := ts.transactionLineRepository.Create(line)
