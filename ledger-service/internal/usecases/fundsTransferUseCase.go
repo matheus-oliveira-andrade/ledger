@@ -3,7 +3,6 @@ package usecases
 import (
 	"context"
 	"errors"
-	"strconv"
 
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/adapters"
 	"github.com/matheus-oliveira-andrade/ledger/ledger-service/internal/utils/slogger"
@@ -43,15 +42,15 @@ func NewFundsTransferUseCase(
 	}
 }
 
-func (u *FundsTransferUseCaseImp) Handle(ctx context.Context, accFrom, accTo, amount int64) error {
-	u.logger.LogInformationContext(ctx, "processing transfer of funds", "accFrom", accFrom, "accTo", accTo, "amount", amount)
+func (u *FundsTransferUseCaseImp) Handle(ctx context.Context, accIdFrom, accIdTo, amount int64) error {
+	u.logger.LogInformationContext(ctx, "processing transfer of funds", "accIdFrom", accIdFrom, "accIdTo", accIdTo, "amount", amount)
 
-	err := u.validateFromAccount(ctx, accFrom, amount)
+	accFrom, err := u.validateFromAccount(ctx, accIdFrom, amount)
 	if err != nil {
 		return err
 	}
 
-	err = u.validateToAccount(ctx, accTo)
+	accTo, err := u.validateToAccount(ctx, accIdTo)
 	if err != nil {
 		return err
 	}
@@ -65,72 +64,55 @@ func (u *FundsTransferUseCaseImp) Handle(ctx context.Context, accFrom, accTo, am
 	return nil
 }
 
-func (u *FundsTransferUseCaseImp) accountExist(ctx context.Context, accId int64) (bool, error) {
-
-	u.logger.LogInformationContext(ctx, "searching for account in account server", "accId", accId)
-
-	acc, err := u.accountAdapter.GetAccount(ctx, strconv.FormatInt(accId, 10))
-	if err != nil {
-		return false, err
-	}
-
-	if acc == nil {
-		return false, nil
-	}
-
-	return true, nil
-}
-
 func (u *FundsTransferUseCaseImp) getBalance(ctx context.Context, accId int64) (int64, error) {
 	return u.balanceService.CalculateBalance(ctx, accId)
 }
 
-func (u *FundsTransferUseCaseImp) validateFromAccount(ctx context.Context, accFrom int64, amount int64) error {
-	ok, err := u.accountExist(ctx, accFrom)
+func (u *FundsTransferUseCaseImp) validateFromAccount(ctx context.Context, accIdFrom int64, amount int64) (*domain.Account, error) {
+	account, err := u.accountAdapter.GetAccount(ctx, accIdFrom)
+
 	if err != nil {
-		u.logger.LogErrorContext(ctx, "error checking if account exist", "accFrom", accFrom, "error", err)
-		return err
+		u.logger.LogErrorContext(ctx, "error checking if account exist", "accIdFrom", accIdFrom, "error", err)
+		return nil, err
 	}
 
-	if !ok {
-		u.logger.LogErrorContext(ctx, "acc from not found", "accFrom", accFrom)
-		return ErrFromAccountNotFound
+	if account == nil {
+		u.logger.LogErrorContext(ctx, "acc from not found", "accIdFrom", accIdFrom)
+		return nil, ErrFromAccountNotFound
 	}
 
-	balance, err := u.getBalance(ctx, accFrom)
+	balance, err := u.getBalance(ctx, accIdFrom)
 	if err != nil {
-		u.logger.LogErrorContext(ctx, "error get acc balance", "accFrom", accFrom, "error", err)
-		return err
+		u.logger.LogErrorContext(ctx, "error get acc balance", "accIdFrom", accIdFrom, "error", err)
+		return nil, err
 	}
 
 	if balance < amount {
-		u.logger.LogErrorContext(ctx, "insufficient balance", "accFrom", accFrom)
-		return ErrInsufficientBalance
+		u.logger.LogErrorContext(ctx, "insufficient balance", "accIdFrom", accIdFrom)
+		return nil, ErrInsufficientBalance
 	}
 
-	return nil
+	return account, nil
 }
 
-func (u *FundsTransferUseCaseImp) validateToAccount(ctx context.Context, accTo int64) error {
-	ok, err := u.accountExist(ctx, accTo)
+func (u *FundsTransferUseCaseImp) validateToAccount(ctx context.Context, accIdTo int64) (*domain.Account, error) {
+	account, err := u.accountAdapter.GetAccount(ctx, accIdTo)
+
 	if err != nil {
-		u.logger.LogErrorContext(ctx, "error checking if account exist", "accTo", accTo, "error", err)
-		return err
+		u.logger.LogErrorContext(ctx, "error checking if account exist", "accIdTo", accIdTo, "error", err)
+		return nil, err
 	}
 
-	if !ok {
-		u.logger.LogErrorContext(ctx, "acc to not found", "accTo", accTo)
-		return ErrToAccountNotFound
+	if account == nil {
+		u.logger.LogErrorContext(ctx, "acc to not found", "accIdTo", accIdTo)
+		return nil, ErrToAccountNotFound
 	}
 
-	return nil
+	return account, nil
 }
 
-func (u *FundsTransferUseCaseImp) createTransaction(ctx context.Context, accFrom int64, accTo int64, amount int64) error {
-	lineFrom := domain.NewTransactionLine(accFrom, amount, domain.Debit)
-	lineTo := domain.NewTransactionLine(accTo, amount, domain.Credit)
-
-	transaction := domain.NewTransaction("transfer between accounts", []*domain.TransactionLine{lineFrom, lineTo})
+func (u *FundsTransferUseCaseImp) createTransaction(ctx context.Context, accFrom *domain.Account, accTo *domain.Account, amount int64) error {
+	transaction := domain.NewTransaction(amount, "transfer between accounts", accFrom, accTo)
 
 	err := u.transactionService.Save(transaction)
 	if err != nil {
