@@ -1,0 +1,22 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: ledger-nginx-httproute
+  namespace: default
+spec:
+  parentRefs:
+  - name: nginx-gateway
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /ledger
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /
+    backendRefs:
+    - name: ledger-api-service
+      port: 9000
